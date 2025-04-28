@@ -1,0 +1,27 @@
+[package]
+name = "wallrust"
+version = "1.0.0"
+edition = "2024"
+authors = ["prime-run <prime-run@github.com>"]
+description = "extract pallete from an image; inspired by wllbash"
+
+[dependencies]
+clap = { version = "4.5", features = ["derive"] }
+regex = "1.10"
+lazy_static = "1.4"
+anyhow = "1.0"
+thiserror = "1.0"
+shellexpand = "3.1"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+toml = "0.8"
+tera = "1.19"
+sha2 = "0.10"
+hex = "0.4"
+dirs = "5.0"
+ordered-float = "4.2"
+
+# NOTE: maybe later?
+# hyprland-ipc-rs = "..."
+
+#FIX: add release opts
