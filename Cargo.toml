@@ -21,7 +21,5 @@ hex = "0.4"
 dirs = "5.0"
 ordered-float = "4.2"
 
-# NOTE: maybe later?
-# hyprland-ipc-rs = "..."
 
-#FIX: add release opts
+# hyprland-ipc-rs = "..."
