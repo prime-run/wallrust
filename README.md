@@ -93,7 +93,7 @@ Wallrust generates these files in the output directory:
 
 ## Custom Templates
 
-Create template files in `~/.config/wallbash/templates/` using [Tera](https://tera.netlify.app/) syntax. Available template variables:
+Create template files in `~/.config/wallbash/templates/` using [Tera](https://github.com/Keats/tera) syntax. Available template variables:
 
 ```
 mode        - "dark" or "light"
