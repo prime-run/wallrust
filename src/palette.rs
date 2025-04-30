@@ -131,6 +131,7 @@ pub fn generate_palette(
         println!("Auto-detected sort mode: {}", final_sort_mode);
     }
     palette.mode = final_sort_mode.to_string();
+    palette.is_dark = final_sort_mode == SortMode::Dark;
 
     // NOTE: Sort primary colors hmmmmm
     // sort by perceived brightness (luma) before applying light/dark logic

@@ -5,7 +5,7 @@ use std::io::Write;
 use tera::{Context, Tera};
 
 fn write_dcol(palette: &Palette, paths: &AppPaths) -> Result<(), WallbashError> {
-    let dcol_path = paths.output_dir.join("wallbash.dcol");
+    let dcol_path = paths.output_dir.join("wallrust.dcol");
     let mut writer = File::create(&dcol_path)?;
 
     writeln!(writer, "dcol_mode=\"{}\"", palette.mode)?;
@@ -43,7 +43,7 @@ fn write_dcol(palette: &Palette, paths: &AppPaths) -> Result<(), WallbashError> 
 }
 
 fn write_css(palette: &Palette, paths: &AppPaths) -> Result<(), WallbashError> {
-    let css_path = paths.output_dir.join("wallbash.css");
+    let css_path = paths.output_dir.join("wallrust.css");
     let mut writer = File::create(&css_path)?;
 
     writeln!(writer, "/* Wallbash Palette */")?;
@@ -95,7 +95,7 @@ fn write_css(palette: &Palette, paths: &AppPaths) -> Result<(), WallbashError> {
 }
 
 fn write_json(palette: &Palette, paths: &AppPaths) -> Result<(), WallbashError> {
-    let json_path = paths.output_dir.join("wallbash.json");
+    let json_path = paths.output_dir.join("wallrust.json");
     let json_string = serde_json::to_string_pretty(palette)?;
     let mut file = File::create(&json_path)?;
     file.write_all(json_string.as_bytes())?;

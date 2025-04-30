@@ -105,19 +105,19 @@ wallrust ~/Pictures/wallpaper.jpg --custom "10 99\n17 66\n24 49\n39 41\n51 37\n5
 
 Wallrust generates these files in the output directory:
 
-- `wallbash.dcol`: Shell variables with color values
-- `wallbash.css`: CSS color variables
-- `wallbash.json`: Palette data in JSON format
+- `wallrust.dcol`: Shell variables with color values
+- `wallrust.css`: CSS color variables
+- `wallrust.json`: Palette data in JSON format
 - Custom template outputs (if templates exist)
 
 ### Output Directory
 
-- Default: `~/.cache/wallbash/`
+- Default: `~/.cache/wallrust/`
 - Custom: Specified with `--output-dir`
 
 ## Custom Templates
 
-Create template files in `~/.config/wallbash/templates/` using [Tera](https://github.com/Keats/tera) syntax. Available template variables:
+Create template files in `~/.config/wallrust/templates/` using [Tera](https://github.com/Keats/tera) syntax. Available template variables:
 
 ```
 mode        - "dark" or "light"

@@ -2,6 +2,7 @@ mod cache;
 mod cli;
 mod config;
 mod error;
+mod html;
 mod imagemagick;
 mod output;
 mod palette;
@@ -151,6 +152,13 @@ fn main() -> Result<()> {
 
     output::generate_outputs(&final_palette, &app_paths)
         .context("Failed to generate output files")?;
+
+    if cli.html {
+        let html_path = app_paths.output_dir.join("palette.html");
+        html::generate_html(&final_palette, &html_path)
+            .context("Failed to generate HTML preview")?;
+        println!("Generated HTML preview at: {}", html_path.display());
+    }
 
     println!("Wallbash finished successfully.");
     Ok(())
