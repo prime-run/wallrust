@@ -13,7 +13,7 @@ keywords = [
 	"colorscheme",
 	"wallpaper",
 	"image-colors",
-	"color-palette-generator",
+	"color-extractor",
 ]
 categories = [
 	"command-line-utilities",
