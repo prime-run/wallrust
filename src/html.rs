@@ -31,7 +31,7 @@ pub fn generate_html(palette: &Palette, output_path: &Path) -> anyhow::Result<()
             gap: 20px;
         }}
         .info {{
-            background-color:rgb(0, 0, 0);
+            background-color: #f5f5f5;
             padding: 15px;
             border-radius: 5px;
         }}
@@ -48,7 +48,7 @@ pub fn generate_html(palette: &Palette, output_path: &Path) -> anyhow::Result<()
             width: 100px;
             height: 100px;
             border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(77, 77, 77, 0.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -59,14 +59,20 @@ pub fn generate_html(palette: &Palette, output_path: &Path) -> anyhow::Result<()
             word-break: break-all;
             padding: 5px;
             text-align: center;
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(0,0,0,0.7);
+            position: relative;
         }}
         .color-block span {{
             display: block;
             line-height: 1.2;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }}
         .color-block:hover {{
             transform: scale(1.05);
+            z-index: 1;
         }}
         .primary-block {{
             width: 150px;
@@ -93,17 +99,35 @@ pub fn generate_html(palette: &Palette, output_path: &Path) -> anyhow::Result<()
             word-break: break-all;
             padding: 5px;
             text-align: center;
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(0,0,0,0.7);
+            position: relative;
         }}
         .accent-item span {{
             display: block;
             line-height: 1.2;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }}
+        .accent-item:hover {{
+            transform: scale(1.05);
+            z-index: 1;
         }}
         .color-text {{
+            text-shadow: 0 0 5px rgba(255,255,255,0.7);
         }}
         .light-text {{
-            color: rgba(255, 255, 255, 0.9);
+            color: rgba(255,255,255,0.9);
             text-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }}
+        .color-name {{
+            font-weight: bold;
+            margin-bottom: 2px;
+        }}
+        .color-value {{
+            font-size: 0.9em;
+            opacity: 0.9;
         }}
     </style>
     <script>
@@ -145,6 +169,7 @@ pub fn generate_html(palette: &Palette, output_path: &Path) -> anyhow::Result<()
         <div class="info">
             <p><strong>Wallpaper:</strong> {}</p>
             <p><strong>Mode:</strong> {}</p>
+            <p><strong>Number of Primary Colors:</strong> {}</p>
             <p>Color values are generated from the wallpaper using Wallrust.</p>
         </div>
 
@@ -171,8 +196,9 @@ pub fn generate_html(palette: &Palette, output_path: &Path) -> anyhow::Result<()
 </html>"#,
         palette.wallpaper,
         if palette.is_dark { "Dark" } else { "Light" },
-        generate_color_blocks(&palette.primary, "primary-block"),
-        generate_color_blocks(&palette.text, "color-block"),
+        palette.primary.len(),
+        generate_color_blocks(&palette.primary, "primary-block", "Primary"),
+        generate_color_blocks(&palette.text, "color-block", "Text"),
         generate_accent_blocks(&palette.accents)
     );
 
@@ -180,16 +206,18 @@ pub fn generate_html(palette: &Palette, output_path: &Path) -> anyhow::Result<()
     Ok(())
 }
 
-fn generate_color_blocks(colors: &[String], class: &str) -> String {
+fn generate_color_blocks(colors: &[String], class: &str, prefix: &str) -> String {
     colors
         .iter()
-        .map(|color| {
+        .enumerate()
+        .map(|(i, color)| {
+            let title = format!("#{} - {} {}", color, prefix, i + 1);
             format!(
-                r#"<div class="{}" style="background-color: #{}">
-                    <span class="color-text">#{}</span>
-                    <span class="color-text">#{}</span>
+                r#"<div class="{}" style="background-color: #{}" title="{}">
+                    <span class="color-name ">{} {}</span>
+                    <span class="color-value ">#{}</span>
                 </div>"#,
-                class, color, color, color
+                class, color, title, prefix, i + 1, color
             )
         })
         .collect::<Vec<String>>()
@@ -199,14 +227,17 @@ fn generate_color_blocks(colors: &[String], class: &str) -> String {
 fn generate_accent_blocks(accents: &[Vec<String>]) -> String {
     accents
         .iter()
-        .flat_map(|primary_accents| {
-            primary_accents.iter().map(|color| {
+        .enumerate()
+        .flat_map(|(primary_idx, primary_accents)| {
+            primary_accents.iter().enumerate().map(move |(accent_idx, color)| {
+                let accent_name = format!("Accent {}-{}", primary_idx + 1, accent_idx + 1);
+                let title = format!("#{} - {}", color, accent_name);
                 format!(
-                    r#"<div class="accent-item" style="background-color: #{}">
-                        <span class="color-text">#{}</span>
-                        <span class="color-text">#{}</span>
+                    r#"<div class="accent-item" style="background-color: #{}" title="{}">
+                        <span class="color-name ">{}</span>
+                        <span class="color-value ">#{}</span>
                     </div>"#,
-                    color, color, color
+                    color, title, accent_name, color
                 )
             })
         })
