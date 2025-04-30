@@ -146,6 +146,12 @@ pub struct Palette {
     pub primary_rgba: Vec<String>, // ["rgba(r,g,b,\\1)", ...]
     pub text_rgba: Vec<String>,    // ["rgba(r,g,b,\\1)", ...]
     pub accents_rgba: Vec<Vec<String>>, // outer: primary index, Inner: accent index 1-9
+    #[serde(default = "default_is_dark")]
+    pub is_dark: bool,              // whether the palette is in dark mode
+}
+
+fn default_is_dark() -> bool {
+    false
 }
 
 #[derive(Debug, Serialize, Deserialize)]

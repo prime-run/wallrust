@@ -49,4 +49,7 @@ pub struct Cli {
         help = "Attempt to detect current Hyprland wallpaper via hyprctl"
     )]
     pub detect_hyprland: bool,
+
+    #[arg(long, help = "Generate HTML color palette preview")]
+    pub html: bool,
 }
