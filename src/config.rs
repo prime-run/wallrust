@@ -178,11 +178,11 @@ impl AppPaths {
     pub fn new(output_dir_override: Option<String>) -> Result<Self, WallbashError> {
         let home_dir = dirs::home_dir().ok_or(WallbashError::HomeDirNotFound)?;
         let config_dir = dirs::config_dir()
-            .map(|p| p.join("wallbash"))
-            .unwrap_or_else(|| home_dir.join(".config/wallbash"));
+            .map(|p| p.join("wallrust"))
+            .unwrap_or_else(|| home_dir.join(".config/wallrust"));
         let cache_dir = dirs::cache_dir()
-            .map(|p| p.join("wallbash"))
-            .unwrap_or_else(|| home_dir.join(".cache/wallbash"));
+            .map(|p| p.join("wallrust"))
+            .unwrap_or_else(|| home_dir.join(".cache/wallrust"));
         let template_dir = config_dir.join("templates");
 
         let output_dir = match output_dir_override {
