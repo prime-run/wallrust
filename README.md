@@ -1,19 +1,43 @@
 # Wallrust
 
-A Rust implementation of wallpaper color palette extraction and theme generation, inspired by wallbash.
+A blazingly fast and feature-rich tool for image color palette extraction and theme generation, inspired by [wallbash](https://github.com/prasanthrangan/hyprdots/wiki/Wallbash/427700a4d4fa268bc7208ab273d8ea1619da97e2).
 
 ## Installation
+
+### archlinux
+
+`wallrust` is pushed to the AUR as [wallrust](https://aur.archlinux.org/packages/wallrust).
+
+```bash
+yay -Sy wallrust
+```
+
+### cargo
+
+```bash
+cargo install wallrust
+```
+
+### Manual
+
+Using makefile:
 
 ```bash
 git clone https://github.com/yourusername/wallrust.git
 cd wallrust
+make
 
-# Build the project
-cargo build --release
-
-# Install (optional)
-cargo install --path .
 ```
+
+or use cargo for `debug` version:
+
+```bash
+git clone https://github.com/yourusername/wallrust.git
+cd wallrust
+cargo build
+```
+
+a simple [cargo-make](https://crates.io/crates/cargo-make/0.3.54) file is included.
 
 ## Usage
 
