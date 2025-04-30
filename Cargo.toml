@@ -3,8 +3,11 @@ name = "wallrust"
 version = "1.0.0"
 edition = "2024"
 authors = ["prime-run <prime-run@github.com>"]
-description = "extract pallete from an image; inspired by wllbash"
+description = "a blazingly fast and feature-rich tool extract color palettes from images"
 license-file = "LICENSE"
+homepage = "https://github.com/prime-run/wallrust"
+repository = "https://github.com/prime-run/wallrust"
+readme = "README.md"
 keywords = [
 	"wallrust",
 	"collorpalette",
