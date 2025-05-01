@@ -8,6 +8,15 @@ A blazingly fast and feature-rich tool for image color palette extraction and th
 
 `wallrust` is pushed to the AUR as [wallrust](https://aur.archlinux.org/packages/wallrust).
 
+use pre-built binary(recommended):
+
+```bash
+yay -Sy wallrust-bin
+
+```
+
+build from source:
+
 ```bash
 yay -Sy wallrust
 ```
@@ -16,6 +25,25 @@ yay -Sy wallrust
 
 ```bash
 cargo install wallrust
+```
+
+### download binaries from [releases](https://github.com/prime-run/wallrust/releases)
+
+```bash
+wget https://github.com/prime-run/wallrust/releases/download/v1.0.1/wallrust-1.0.1-linux-x86_64.tar.gz
+tar -xvf wallrust-1.0.1-linux-x86_64.tar.gz
+cp wallrust-1.0.1-linux-x86_64/wallrust ~/.local/bin/
+
+```
+
+make sure to add `~/.local/bin` to your `$PATH`
+
+```bash
+#bash
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+
+#zsh
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
 ```
 
 ### Manual
