@@ -6,7 +6,7 @@ A blazingly fast and feature-rich tool for image color palette extraction and th
 
 ### archlinux
 
-`wallrust` is pushed to the AUR as [wallrust](https://aur.archlinux.org/packages/wallrust).
+`wallrust` is pushed to the arch [AUR](https://aur.archlinux.org/packages/wallrust).
 
 use pre-built binary(recommended):
 
