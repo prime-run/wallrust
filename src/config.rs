@@ -1,6 +1,7 @@
 use crate::error::WallbashError;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
+use std::fs;
 
 pub const DEFAULT_COLORS: usize = 4;
 pub const DEFAULT_FUZZ: u8 = 70;
@@ -66,10 +67,8 @@ impl ColorProfile {
             profile_count += 1;
         }
         if let Some(custom_curve) = custom {
-            //FIX:remove this?  detailed check in palette.rs::parse_curve
             let cleaned_curve = custom_curve.replace("\\n", "\n");
             if cleaned_curve.split('\n').count() < ACCENT_COUNT {
-                // return Err(WallbashError::InvalidCustomCurve{ curve: custom_curve });
                 eprintln!(
                     "Warning: Custom curve has fewer than {} lines.",
                     ACCENT_COUNT
@@ -128,7 +127,7 @@ impl SortMode {
 impl std::fmt::Display for SortMode {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            SortMode::Auto => write!(f, "auto"), //WARN: should be resolved before use
+            SortMode::Auto => write!(f, "auto"),
             SortMode::Dark => write!(f, "dark"),
             SortMode::Light => write!(f, "light"),
         }
@@ -136,18 +135,17 @@ impl std::fmt::Display for SortMode {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, Default)]
-//NOTE: now i see why I only have black cloth!!! I can't decide on colors!!
 pub struct Palette {
-    pub mode: String,                   // resolved from SortMode
-    pub wallpaper: String,              // path to the wallpaper image used
-    pub primary: Vec<String>,           // hex colors ["RRGGBB", ...]
-    pub text: Vec<String>,              // corresponding text colors ["RRGGBB", ...]
-    pub accents: Vec<Vec<String>>, // outer: primary index, Inner: accent index 1-9 ["RRGGBB", ...]
-    pub primary_rgba: Vec<String>, // ["rgba(r,g,b,\\1)", ...]
-    pub text_rgba: Vec<String>,    // ["rgba(r,g,b,\\1)", ...]
-    pub accents_rgba: Vec<Vec<String>>, // outer: primary index, Inner: accent index 1-9
+    pub mode: String,
+    pub wallpaper: String,
+    pub primary: Vec<String>,
+    pub text: Vec<String>,
+    pub accents: Vec<Vec<String>>,
+    pub primary_rgba: Vec<String>,
+    pub text_rgba: Vec<String>,
+    pub accents_rgba: Vec<Vec<String>>,
     #[serde(default = "default_is_dark")]
-    pub is_dark: bool,              // whether the palette is in dark mode
+    pub is_dark: bool,
 }
 
 fn default_is_dark() -> bool {
@@ -161,15 +159,16 @@ pub struct CacheData {
     pub color_profile: ColorProfile,
     pub sort_mode: SortMode,
     pub palette: Palette,
+    #[serde(default)]
+    pub wallset: bool,
 }
 
 #[derive(Debug, Clone)]
 pub struct AppPaths {
-    pub home_dir: PathBuf,
-    pub config_dir: PathBuf,
-    pub cache_dir: PathBuf,
     pub template_dir: PathBuf,
     pub output_dir: PathBuf,
+    pub thumbs_dir: PathBuf,
+    pub dcols_dir: PathBuf,
     pub mpc_cache_file: PathBuf,
     pub wallbash_cache_file: PathBuf,
 }
@@ -184,36 +183,64 @@ impl AppPaths {
             .map(|p| p.join("wallrust"))
             .unwrap_or_else(|| home_dir.join(".cache/wallrust"));
         let template_dir = config_dir.join("templates");
+        
+        let thumbs_dir = cache_dir.join("thumbs");
+        let dcols_dir = cache_dir.join("dcols");
 
         let output_dir = match output_dir_override {
             Some(dir) => PathBuf::from(
                 shellexpand::full(&dir)
                     .map_err(|e| {
-                        WallbashError::PathExpansion(format!("Output dir expansion failed: {}", e))
+                        WallbashError::PathExpansion(format!("Output directory expansion failed: {}", e))
                     })?
                     .into_owned(),
             ),
-            None => cache_dir.clone(),
+            None => {
+                let wd = std::env::current_dir()?;
+                println!(
+                    "No output directory specified. Using current directory: {}",
+                    wd.display()
+                );
+                wd
+            }
         };
 
-        std::fs::create_dir_all(&config_dir)?;
-        std::fs::create_dir_all(&cache_dir)?;
-        std::fs::create_dir_all(&output_dir)?;
-        //NOTE: template dir doesn't *need* to exist initially, checked later
-        //
-        // std::fs::create_dir_all(&template_dir)?;
+        fs::create_dir_all(&config_dir)?;
+        fs::create_dir_all(&cache_dir)?;
+        fs::create_dir_all(&template_dir)?;
 
-        let mpc_cache_file = cache_dir.join("wallbash_temp.mpc");
-        let wallbash_cache_file = cache_dir.join("wallbash_palette.cache");
+        let mpc_cache_file = cache_dir.join("wallbash.mpc");
+        let wallbash_cache_file = cache_dir.join("wallbash_cache.json");
 
         Ok(Self {
-            home_dir,
-            config_dir,
-            cache_dir,
             template_dir,
             output_dir,
+            thumbs_dir,
+            dcols_dir,
             mpc_cache_file,
             wallbash_cache_file,
         })
+    }
+    
+    pub fn ensure_thumbs_dir(&self) -> Result<(), WallbashError> {
+        println!("Ensuring thumbnail directory exists: {}", self.thumbs_dir.display());
+        if !self.thumbs_dir.exists() {
+            println!("Creating thumbnail directory");
+            fs::create_dir_all(&self.thumbs_dir)?;
+        } else {
+            println!("Thumbnail directory already exists");
+        }
+        Ok(())
+    }
+    
+    pub fn ensure_dcols_dir(&self) -> Result<(), WallbashError> {
+        println!("Ensuring dcols directory exists: {}", self.dcols_dir.display());
+        if !self.dcols_dir.exists() {
+            println!("Creating dcols directory");
+            fs::create_dir_all(&self.dcols_dir)?;
+        } else {
+            println!("Dcols directory already exists");
+        }
+        Ok(())
     }
 }

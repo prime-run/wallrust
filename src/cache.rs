@@ -29,18 +29,44 @@ fn calculate_checksum(file_path: &Path) -> Result<String, WallbashError> {
 
 pub fn read_cache(cache_file: &Path) -> Result<Option<CacheData>, WallbashError> {
     if !cache_file.exists() {
+        println!("Cache file does not exist: {}", cache_file.display());
         return Ok(None);
     }
+    
     let content = fs::read_to_string(cache_file)?;
-    serde_json::from_str(&content)
-        .map(Some)
-        .map_err(WallbashError::JsonError)
+    println!("Read cache file: {} ({} bytes)", cache_file.display(), content.len());
+    
+    match serde_json::from_str(&content) {
+        Ok(cache_data) => {
+            println!("Successfully parsed cache file");
+            Ok(Some(cache_data))
+        },
+        Err(e) => {
+            println!("Failed to parse cache file: {}", e);
+            
+            
+            println!("Removing corrupted cache file");
+            let _ = fs::remove_file(cache_file);
+            
+            
+            Ok(None)
+        }
+    }
 }
 
 pub fn write_cache(cache_file: &Path, data: &CacheData) -> Result<(), WallbashError> {
+    println!("Writing cache to: {}", cache_file.display());
+    
     let json_string = serde_json::to_string_pretty(data)?;
+    println!("Cache data size: {} bytes", json_string.len());
+    
+    if let Some(parent) = cache_file.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    
     let mut file = File::create(cache_file)?;
     file.write_all(json_string.as_bytes())?;
+    println!("Cache written successfully");
     Ok(())
 }
 
@@ -49,6 +75,7 @@ pub fn needs_regeneration(
     current_image_path: &Path,
     current_profile: &ColorProfile,
     current_sort_mode: SortMode,
+    is_wallset: bool,
 ) -> Result<Option<Palette>, WallbashError> {
     let image_path_str = current_image_path.display().to_string();
 
@@ -61,8 +88,9 @@ pub fn needs_regeneration(
 
             if &cached_data.color_profile != current_profile
                 || cached_data.sort_mode != current_sort_mode
+                || cached_data.wallset != is_wallset
             {
-                println!("Cache invalidated: Profile or sort mode changed.");
+                println!("Cache invalidated: Profile, sort mode, or extraction method changed.");
                 return Ok(None);
             }
 
@@ -87,6 +115,7 @@ pub fn create_cache_data(
     profile: &ColorProfile,
     sort_mode: SortMode,
     palette: &Palette,
+    is_wallset: bool,
 ) -> Result<CacheData, WallbashError> {
     let checksum = calculate_checksum(image_path)?;
     Ok(CacheData {
@@ -95,5 +124,6 @@ pub fn create_cache_data(
         color_profile: profile.clone(),
         sort_mode,
         palette: palette.clone(),
+        wallset: is_wallset,
     })
 }

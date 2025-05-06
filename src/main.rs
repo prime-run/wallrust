@@ -13,7 +13,40 @@ use clap::Parser;
 use config::AppPaths;
 use error::WallbashError;
 use std::fs;
-use std::path::PathBuf;
+use std::path::{PathBuf, Path};
+use sha2::{Sha256, Digest};
+
+
+fn calculate_hash(path: &Path) -> Result<String, WallbashError> {
+    let path_str = path.to_str().ok_or_else(|| {
+        WallbashError::InvalidInput(format!("Invalid path characters: {}", path.display()))
+    })?;
+    
+    let mut hasher = Sha256::new();
+    hasher.update(path_str.as_bytes());
+    let result = hasher.finalize();
+    
+    Ok(format!("{:x}", result))
+}
+
+
+fn log_palette_preview(palette: &config::Palette, source: &str) {
+    println!("----- {} Palette Preview -----", source);
+    println!("Mode: {}", palette.mode);
+    
+    
+    for i in 0..std::cmp::min(3, palette.primary.len()) {
+        println!("Primary {}: {}", i+1, palette.primary[i]);
+    }
+    
+    
+    if let Some(accents) = palette.accents.first() {
+        if let Some(accent) = accents.first() {
+            println!("First Accent: {}", accent);
+        }
+    }
+    println!("-------------------------------");
+}
 
 fn main() -> Result<()> {
     let cli = cli::Cli::parse();
@@ -53,8 +86,45 @@ fn main() -> Result<()> {
     let initial_sort_mode =
         config::SortMode::from_cli(cli.dark, cli.light).context("Invalid sort mode selection")?;
 
-    let cached_palette = if cli.force {
+    let extraction_image_path;
+    let file_hash;
+    
+    if cli.wallset {
+        
+        file_hash = calculate_hash(&input_image_path)?;
+        
+        
+        app_paths.ensure_thumbs_dir()?;
+        
+        let thumbnail_path = app_paths.thumbs_dir.join(format!("{}.thmb", file_hash));
+        println!("Thumbnail path: {}", thumbnail_path.display());
+        
+        if !thumbnail_path.exists() || cli.force {
+            println!("Generating thumbnail for color extraction...");
+            imagemagick::generate_thumbnail(&input_image_path, &thumbnail_path)
+                .context("Failed to generate thumbnail")?;
+        } else {
+            println!("Using existing thumbnail: {}", thumbnail_path.display());
+        }
+        extraction_image_path = thumbnail_path;
+    } else {
+        
+        extraction_image_path = input_image_path.clone();
+        file_hash = String::new(); 
+    }
+
+    
+    let should_force = if cli.force {
         println!("Force flag set, skipping cache check.");
+        true
+    } else if cli.wallset {
+        println!("Checking if cache needs regeneration for wallset mode...");
+        false
+    } else {
+        false
+    };
+    
+    let cached_palette = if should_force {
         None
     } else {
         cache::needs_regeneration(
@@ -62,18 +132,28 @@ fn main() -> Result<()> {
             &input_image_path,
             &color_profile,
             initial_sort_mode,
+            cli.wallset
         )?
     };
 
     let final_palette = match cached_palette {
-        Some(palette) => palette,
+        Some(palette) => {
+            if cli.wallset {
+                println!("Using cached palette (from wallset mode)");
+            } else {
+                println!("Using cached palette (from regular mode)");
+            }
+            log_palette_preview(&palette, "Cached");
+            palette
+        },
         None => {
             println!(
-                "Generating new palette (Profile: {}, Mode: {}, Colors: {}, Fuzz: {})...",
-                color_profile, initial_sort_mode, cli.colors, cli.fuzz
+                "Generating new palette (Profile: {}, Mode: {}, Colors: {}, Fuzz: {}, Wallset: {})...",
+                color_profile, initial_sort_mode, cli.colors, cli.fuzz, cli.wallset
             );
 
-            imagemagick::ping_image(&input_image_path).context("ImageMagick ping failed")?;
+            
+            imagemagick::ping_image(&extraction_image_path).context("ImageMagick ping failed")?;
 
             struct CleanupGuard<'a>(&'a PathBuf);
             impl<'a> Drop for CleanupGuard<'a> {
@@ -92,7 +172,8 @@ fn main() -> Result<()> {
             let mpc_path = app_paths.mpc_cache_file.clone();
             let _cleanup_guard = CleanupGuard(&mpc_path);
 
-            imagemagick::create_mpc_cache(&input_image_path, &app_paths.mpc_cache_file)
+            
+            imagemagick::create_mpc_cache(&extraction_image_path, &app_paths.mpc_cache_file)
                 .context("Failed to create ImageMagick MPC cache")?;
 
             let mut base_colors_raw =
@@ -127,8 +208,9 @@ fn main() -> Result<()> {
                 .take(cli.colors)
                 .collect();
 
+            
             let generated_palette = palette::generate_palette(
-                &input_image_path,
+                &input_image_path, 
                 &app_paths.mpc_cache_file,
                 base_hex_colors,
                 cli.colors,
@@ -142,17 +224,31 @@ fn main() -> Result<()> {
                 &color_profile,
                 initial_sort_mode,
                 &generated_palette,
+                cli.wallset
             )?;
             cache::write_cache(&app_paths.wallbash_cache_file, &cache_data)
                 .context("Failed to write palette cache")?;
 
+            
+            log_palette_preview(&generated_palette, if cli.wallset { "Thumbnail" } else { "Original" });
             generated_palette
         }
     };
 
+    
     output::generate_outputs(&final_palette, &app_paths)
         .context("Failed to generate output files")?;
-
+    
+    
+    if cli.wallset && !file_hash.is_empty() {
+        
+        app_paths.ensure_dcols_dir()?;
+        
+        let dcol_path = app_paths.dcols_dir.join(format!("{}.dcol", file_hash));
+        output::write_dcol(&final_palette, &dcol_path)
+            .context("Failed to write dcol file to hashed path")?;
+    }
+        
     if cli.html {
         let html_path = app_paths.output_dir.join("palette.html");
         html::generate_html(&final_palette, &html_path)

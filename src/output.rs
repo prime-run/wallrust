@@ -2,24 +2,29 @@ use crate::config::{AppPaths, Palette, ACCENT_COUNT};
 use crate::error::WallbashError;
 use std::fs::{self, File};
 use std::io::Write;
+use std::path::Path;
 use tera::{Context, Tera};
 
-fn write_dcol(palette: &Palette, paths: &AppPaths) -> Result<(), WallbashError> {
-    let dcol_path = paths.output_dir.join("wallrust.dcol");
-    let mut writer = File::create(&dcol_path)?;
+pub fn write_dcol(palette: &Palette, dcol_path: &Path) -> Result<(), WallbashError> {
+    
+    if let Some(parent) = dcol_path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    
+    let mut writer = File::create(dcol_path)?;
 
     writeln!(writer, "dcol_mode=\"{}\"", palette.mode)?;
     writeln!(writer, "dcol_wallpaper=\"{}\"", palette.wallpaper)?;
 
     for i in 0..palette.primary.len() {
-        writeln!(writer, "dcol_pry{}={:?}", i + 1, palette.primary[i])?;
+        writeln!(writer, "dcol_pry{}=\"{}\"", i + 1, palette.primary[i])?;
         writeln!(
             writer,
             "dcol_pry{}_rgba=\"{}\"",
             i + 1,
             palette.primary_rgba[i]
         )?;
-        writeln!(writer, "dcol_txt{}={:?}", i + 1, palette.text[i])?;
+        writeln!(writer, "dcol_txt{}=\"{}\"", i + 1, palette.text[i])?;
         writeln!(
             writer,
             "dcol_txt{}_rgba=\"{}\"",
@@ -29,7 +34,7 @@ fn write_dcol(palette: &Palette, paths: &AppPaths) -> Result<(), WallbashError> 
 
         for j in 0..ACCENT_COUNT {
             if let Some(accent_color) = palette.accents.get(i).and_then(|a| a.get(j)) {
-                writeln!(writer, "dcol_{}xa{}={:?}", i + 1, j + 1, accent_color)?;
+                writeln!(writer, "dcol_{}xa{}=\"{}\"", i + 1, j + 1, accent_color)?;
                 if let Some(accent_rgba) = palette.accents_rgba.get(i).and_then(|a| a.get(j)) {
                     writeln!(writer, "dcol_{}xa{}_rgba=\"{}\"", i + 1, j + 1, accent_rgba)?;
                 }
@@ -74,19 +79,9 @@ fn write_css(palette: &Palette, paths: &AppPaths) -> Result<(), WallbashError> {
         }
     }
 
-    //  optional: All Accents
-    //  could add all accents like --xa1_1, --xa1_2 ... --xa2_1 etc. if needed
-    /*
-    for i in 0..palette.accents.len() {
-         if let Some(accents_i) = palette.accents.get(i) {
-             for j in 0..ACCENT_COUNT {
-                 if let Some(acc) = accents_i.get(j) {
-                     writeln!(writer, "  --xa{}_{}: #{};", i+1, j+1, acc)?;
-                 }
-             }
-         }
-    }
-    */
+    
+    
+   
 
     writeln!(writer, "}}")?;
 
@@ -172,9 +167,10 @@ fn apply_templates(palette: &Palette, paths: &AppPaths) -> Result<(), WallbashEr
     Ok(())
 }
 
-/// Main function to generate all output files.
+
 pub fn generate_outputs(palette: &Palette, paths: &AppPaths) -> Result<(), WallbashError> {
-    write_dcol(palette, paths)?;
+    let dcol_path = paths.output_dir.join("wallrust.dcol");
+    write_dcol(palette, &dcol_path)?;
     write_css(palette, paths)?;
     write_json(palette, paths)?;
     apply_templates(palette, paths)?;
