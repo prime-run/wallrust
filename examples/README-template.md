@@ -27,6 +27,30 @@ These example templates show how to use Wallrust's Tera templating system to gen
 3. **Use Generated Theme Files**:
    The processed template files will be created in your output directory (default: current directory or specified with `--output-dir`).
 
+## Template Output Path and Backup Directives
+
+You can control where a template's output is written and whether to back up the previous file by adding special directives at the top of your template:
+
+- **Output Path**: Write the rendered file to a specific location (supports `~` and environment variables):
+  ```
+  {# output: ~/.config/kitty/colors.conf #}
+  #!output: ~/.config/kitty/colors.conf
+  ```
+  If not specified, the output will be written to the default output directory.
+
+- **Backup**: If set to `true`, and the output file exists, it will be backed up to `<output_path>.wr.bakup` before being overwritten:
+  ```
+  {# backup: true #}
+  #!backup: true
+  ```
+  Default is `false` (no backup).
+
+**Example at the top of a template:**
+```
+{# output: ~/.config/kitty/colors.conf #}
+{# backup: true #}
+```
+
 ## Available Template Variables
 
 | Variable | Description | Example |
