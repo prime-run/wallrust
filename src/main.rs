@@ -236,7 +236,7 @@ fn main() -> Result<()> {
     };
 
     
-    output::generate_outputs(&final_palette, &app_paths)
+    output::generate_outputs(&final_palette, &app_paths, cli.no_templates)
         .context("Failed to generate output files")?;
     
     

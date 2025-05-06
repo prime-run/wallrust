@@ -55,4 +55,7 @@ pub struct Cli {
     
     #[arg(long, help = "Generate thumbnails and dcol files compatible with wallbash scripts")]
     pub wallset: bool,
+
+    #[arg(long, help = "Skip custom template generation")]
+    pub no_templates: bool,
 }

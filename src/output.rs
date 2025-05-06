@@ -1,17 +1,18 @@
-use crate::config::{ACCENT_COUNT, AppPaths, Palette};
+use crate::config::{AppPaths, Palette, ACCENT_COUNT};
 use crate::error::WallbashError;
-use shellexpand;
 use std::fs::{self, File};
-use std::io::BufRead;
 use std::io::Write;
 use std::path::Path;
 use tera::{Context, Tera};
+use std::io::BufRead;
+use shellexpand;
 
 pub fn write_dcol(palette: &Palette, dcol_path: &Path) -> Result<(), WallbashError> {
+    
     if let Some(parent) = dcol_path.parent() {
         fs::create_dir_all(parent)?;
     }
-
+    
     let mut writer = File::create(dcol_path)?;
 
     writeln!(writer, "dcol_mode=\"{}\"", palette.mode)?;
@@ -80,6 +81,10 @@ fn write_css(palette: &Palette, paths: &AppPaths) -> Result<(), WallbashError> {
         }
     }
 
+    
+    
+   
+
     writeln!(writer, "}}")?;
 
     println!("Generated {}", css_path.display());
@@ -143,8 +148,7 @@ fn apply_templates(palette: &Palette, paths: &AppPaths) -> Result<(), WallbashEr
                 let mut backup_enabled: bool = false;
                 if let Ok(file) = File::open(&template_path) {
                     let reader = std::io::BufReader::new(file);
-                    for line in reader.lines().take(5) {
-                        // Only check the first 5 lines
+                    for line in reader.lines().take(5) { // Only check the first 5 lines
                         if let Ok(l) = line {
                             let trimmed = l.trim();
                             if let Some(rest) = trimmed.strip_prefix("{# output:") {
@@ -166,13 +170,11 @@ fn apply_templates(palette: &Palette, paths: &AppPaths) -> Result<(), WallbashEr
                 match tera.render(template_name, &context) {
                     Ok(rendered_content) => {
                         let output_path = if let Some(path) = output_path_override {
+                            
                             match shellexpand::full(&path) {
                                 Ok(expanded) => Path::new(expanded.as_ref()).to_path_buf(),
                                 Err(_) => {
-                                    eprintln!(
-                                        "Warning: Failed to expand output path '{}', using default output dir.",
-                                        path
-                                    );
+                                    eprintln!("Warning: Failed to expand output path '{}', using default output dir.", path);
                                     paths.output_dir.join(template_name)
                                 }
                             }
@@ -181,11 +183,7 @@ fn apply_templates(palette: &Palette, paths: &AppPaths) -> Result<(), WallbashEr
                         };
                         if let Some(parent) = output_path.parent() {
                             if let Err(e) = fs::create_dir_all(parent) {
-                                eprintln!(
-                                    "Warning: Failed to create output directory '{}': {}",
-                                    parent.display(),
-                                    e
-                                );
+                                eprintln!("Warning: Failed to create output directory '{}': {}", parent.display(), e);
                             }
                         }
                         // Backup logic
@@ -194,21 +192,12 @@ fn apply_templates(palette: &Palette, paths: &AppPaths) -> Result<(), WallbashEr
                                 match output_path.extension().and_then(|e| e.to_str()) {
                                     Some(ext) => format!("{}.wr.bakup", ext),
                                     None => "wr.bakup".to_string(),
-                                },
+                                }
                             );
                             if let Err(e) = fs::copy(&output_path, &backup_path) {
-                                eprintln!(
-                                    "Warning: Failed to backup '{}' to '{}': {}",
-                                    output_path.display(),
-                                    backup_path.display(),
-                                    e
-                                );
+                                eprintln!("Warning: Failed to backup '{}' to '{}': {}", output_path.display(), backup_path.display(), e);
                             } else {
-                                println!(
-                                    "Backed up '{}' to '{}'",
-                                    output_path.display(),
-                                    backup_path.display()
-                                );
+                                println!("Backed up '{}' to '{}'", output_path.display(), backup_path.display());
                             }
                         }
                         match fs::write(&output_path, rendered_content) {
@@ -233,11 +222,16 @@ fn apply_templates(palette: &Palette, paths: &AppPaths) -> Result<(), WallbashEr
     Ok(())
 }
 
-pub fn generate_outputs(palette: &Palette, paths: &AppPaths) -> Result<(), WallbashError> {
+
+pub fn generate_outputs(palette: &Palette, paths: &AppPaths, skip_templates: bool) -> Result<(), WallbashError> {
     let dcol_path = paths.output_dir.join("wallrust.dcol");
     write_dcol(palette, &dcol_path)?;
     write_css(palette, paths)?;
     write_json(palette, paths)?;
-    apply_templates(palette, paths)?;
+    if !skip_templates {
+        apply_templates(palette, paths)?;
+    } else {
+        println!("Skipping custom template generation (--no-templates set)");
+    }
     Ok(())
 }
