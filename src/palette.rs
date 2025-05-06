@@ -98,7 +98,6 @@ fn parse_curve(curve_str: &str) -> Result<Vec<(u8, u8)>, WallbashError> {
             )));
         }
     }
-    //WARN: don't strictly enforce 9 points here, but rely on the loop logic later
     if points.len() != ACCENT_COUNT {
         eprintln!(
              "Warning: Parsed curve has {} points, but {} are expected for standard accent generation.",
@@ -133,15 +132,15 @@ pub fn generate_palette(
     palette.mode = final_sort_mode.to_string();
     palette.is_dark = final_sort_mode == SortMode::Dark;
 
-    // NOTE: Sort primary colors hmmmmm
-    // sort by perceived brightness (luma) before applying light/dark logic
+    
+    
     initial_hex_colors.sort_by_cached_key(|hex| {
         ordered_float::NotNan::new(calculate_luma(hex).unwrap_or(0.0)).unwrap_or_default()
     });
     if final_sort_mode == SortMode::Light {
         initial_hex_colors.reverse();
     }
-    // now `initial_hex_colors` is sorted according to the final mode
+    
 
     let mut current_curve_str = profile.to_curve_string();
     let saturation = get_average_saturation(mpc_path)?;

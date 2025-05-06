@@ -5,15 +5,15 @@ use std::path::Path;
 use std::process::{Command, Output, Stdio};
 
 lazy_static! {
-    // example: `6400: (215,215,215) #D7D7D7 srgb(215,215,215)`
-    // example: ` 1: ( 48, 50, 56) #303238 srgb(48,50,56)`
+    
+    
     static ref HISTOGRAM_RE: Regex = Regex::new(r"^\s*(\d+):\s*.*\s+#([0-9a-fA-F]{6})").unwrap();
 
-    // example: `0.5` or `1.2345e-05`
+    
     static ref FX_MEAN_RE: Regex = Regex::new(r"^[0-9.eE+-]+$").unwrap();
 
-    // regex to parse HSB output from histogram:info: like hsb(H,S%,B%)
-    // example: `1: ( 35, 80, 93) #EDBF23 hsb(47.7,76.2%,92.9%)` - We want the first number (Hue)
+    
+    
     static ref HSB_RE: Regex = Regex::new(r"hsb\((\d+\.?\d*),").unwrap();
 }
 
@@ -25,15 +25,15 @@ pub fn run_magick(args: &[&str]) -> Result<Output, WallbashError> {
 
     match output_res {
         Ok(output) => {
-            // check stderr carefully - magick often puts stupid warnings here but still succeeds
+            
             let stderr_str = String::from_utf8_lossy(&output.stderr);
-            // check if stderr contains "warning:" or "Warning:" case-insensitively
-            // FIX: a more realiable method ?
+            
+            
             let is_warning_only = stderr_str.to_lowercase().contains("warning:");
 
             if !output.status.success() && !is_warning_only {
                 // treat as error if non-zero exit AND stderr doesn't look like just warnings
-                // hmmm?
+                
                 Err(WallbashError::MagickCommand {
                     cmd: format!("magick {}", args.join(" ")),
                     stderr: stderr_str.into_owned(),
@@ -94,7 +94,7 @@ pub fn extract_kmeans_colors(
     colors: usize,
     fuzz: u8,
 ) -> Result<Vec<(u64, String)>, WallbashError> {
-    let mpc_arg = format!("mpc:{}", mpc_path.to_str().unwrap()); // Assumes valid path checked before
+    let mpc_arg = format!("mpc:{}", mpc_path.to_str().unwrap()); 
     let kmeans_output = run_magick(&[
         &mpc_arg,
         "-depth",
@@ -226,11 +226,11 @@ pub fn get_hsb_hue(color_target: &str) -> Result<String, WallbashError> {
         "HSB",
         "-format",
         "%c",
-        //NOTE:  eg output: `1: (237,191, 35) #EDBF23 hsb(47.7,76.2%,92.9%)`
+        
         "histogram:info:",
     ])?;
 
-    //FIX: for E0716: Bind the String to a variable first ***
+    
     let output_string = hue_output.stdout_str()?;
 
     let hue_str = HSB_RE
@@ -266,4 +266,56 @@ pub fn color_from_hsb(hsb_string: &str) -> Result<String, WallbashError> {
             ))
         })?;
     Ok(hex)
+}
+
+pub fn generate_thumbnail(
+    input_path: &Path,
+    thumbnail_path: &Path,
+) -> Result<(), WallbashError> {
+    
+    if let Some(parent) = thumbnail_path.parent() {
+        std::fs::create_dir_all(parent)?;
+    }
+
+    
+    let input_str = input_path.to_str().ok_or_else(|| {
+        WallbashError::InvalidInput(format!("Invalid path characters: {}", input_path.display()))
+    })?;
+    
+    let thumbnail_str = thumbnail_path.to_str().ok_or_else(|| {
+        WallbashError::InvalidInput(format!("Invalid path characters: {}", thumbnail_path.display()))
+    })?;
+
+    println!("Generating thumbnail: {} -> {}", input_str, thumbnail_str);
+
+    
+    
+    let mut cmd = Command::new("magick");
+    cmd.arg(format!("{}[0]", input_str))
+       .arg("-strip")
+       .arg("-resize")
+       .arg("1000")
+       .arg("-gravity")
+       .arg("center")
+       .arg("-extent") 
+       .arg("1000")
+       .arg("-quality")
+       .arg("90")
+       .arg(thumbnail_str);
+
+    println!("Running command: magick {}[0] -strip -resize 1000 -gravity center -extent 1000 -quality 90 {}", 
+             input_str, thumbnail_str);
+
+    let output = cmd.output()?;
+    
+    if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        return Err(WallbashError::ImageMagickFailed(format!(
+            "Failed to generate thumbnail: {}",
+            stderr
+        )));
+    }
+
+    println!("Successfully generated thumbnail: {}", thumbnail_path.display());
+    Ok(())
 }

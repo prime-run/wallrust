@@ -29,21 +29,21 @@ pub struct Cli {
     )]
     pub custom: Option<String>,
 
-    // FIX: they need to make more sense! (I blame wallbash XD)
+    
     #[arg(short, long, help = "Force dark sort mode")]
     pub dark: bool,
 
     #[arg(short, long, help = "Force light sort mode")]
     pub light: bool,
 
-    //  K-Means
+    
     #[arg(long, default_value_t = DEFAULT_COLORS, help = "Number of primary colors to extract")]
     pub colors: usize,
 
     #[arg(long, default_value_t = DEFAULT_FUZZ, help = "Color fuzziness percentage for k-means")]
     pub fuzz: u8,
 
-    //NOTE:   detections
+    
     #[arg(
         long,
         help = "Attempt to detect current Hyprland wallpaper via hyprctl"
@@ -52,4 +52,7 @@ pub struct Cli {
 
     #[arg(long, help = "Generate HTML color palette preview")]
     pub html: bool,
+    
+    #[arg(long, help = "Generate thumbnails and dcol files compatible with wallbash scripts")]
+    pub wallset: bool,
 }
