@@ -101,6 +101,7 @@ OPTIONS:
     --colors <N>               Number of primary colors [default: 4]
     --fuzz <N>                 Color fuzziness percentage [default: 70]
     --detect-hyprland          Detect current Hyprland wallpaper
+    --wallset                  Generate thumbnails and dcol files compatible with wallbash scripts
     -h, --help                 Print help
     -V, --version              Print version
 ```
@@ -125,6 +126,9 @@ wallrust ~/Pictures/wallpaper.jpg --output-dir ~/themes
 # Force regeneration (ignore cache) (not recommended caching engine here is  smart! and reliable)
 wallrust ~/Pictures/wallpaper.jpg --force
 
+# Generate thumbnails and hash-based dcol files (compatible with wallbash scripts)
+wallrust ~/Pictures/wallpaper.jpg --wallset
+
 # ADVANCED Custom color curve (9 points of brightness and saturation)
 wallrust ~/Pictures/wallpaper.jpg --custom "10 99\n17 66\n24 49\n39 41\n51 37\n58 34\n72 30\n84 26\n99 22"
 ```
@@ -138,10 +142,15 @@ Wallrust generates these files in the output directory:
 - `wallrust.json`: Palette data in JSON format
 - Custom template outputs (if templates exist)
 
+When using the `--wallset` flag, additional files are generated:
+- Thumbnail in `~/.cache/wallrust/thumbs/{hash}.thmb`
+- Hash-based dcol file in `~/.cache/wallrust/dcols/{hash}.dcol`
+
 ### Output Directory
 
 - Default: `~/.cache/wallrust/`
 - Custom: Specified with `--output-dir`
+- Thumbnails and hash-based dcol files: `~/.cache/wallrust/thumbs/` and `~/.cache/wallrust/dcols/`
 
 ## Custom Templates
 
@@ -164,6 +173,24 @@ accents_rgba - RGBA versions of accent colors
 - **vibrant**: High saturation, vivid colors
 - **pastel**: Soft, muted colors with lower saturation
 - **mono**: Grayscale palette
+
+## Wallset Mode
+
+The `--wallset` flag enables a mode that works similarly to the wallbash scripts:
+
+1. **Thumbnail Generation**: Creates a smaller thumbnail image optimized for color extraction
+2. **Consistent File Naming**: Uses SHA256 hashing of the image path for consistent file names
+3. **Directory Structure**: Organizes files in a way compatible with theme-switching scripts
+
+This mode is ideal when:
+- You need consistent color extraction between Wallrust and wallbash scripts
+- You want optimized performance for large image files
+- You're integrating with other tools that expect this specific format
+
+Example with all options:
+```bash
+wallrust ~/Pictures/wallpaper.jpg --wallset --vibrant --dark
+```
 
 ## Requirements
 
