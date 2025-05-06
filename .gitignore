@@ -1,3 +1,4 @@
 /target
 output/**
 ./frame_300.png
+local/
