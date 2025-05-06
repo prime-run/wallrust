@@ -102,6 +102,7 @@ OPTIONS:
     --fuzz <N>                 Color fuzziness percentage [default: 70]
     --detect-hyprland          Detect current Hyprland wallpaper
     --wallset                  Generate thumbnails and dcol files compatible with wallbash scripts
+    --no-templates             Skip custom template generation
     -h, --help                 Print help
     -V, --version              Print version
 ```
@@ -128,6 +129,9 @@ wallrust ~/Pictures/wallpaper.jpg --force
 
 # Generate thumbnails and hash-based dcol files (compatible with wallbash scripts)
 wallrust ~/Pictures/wallpaper.jpg --wallset
+
+# Skip custom template generation
+wallrust ~/Pictures/wallpaper.jpg --no-templates
 
 # ADVANCED Custom color curve (9 points of brightness and saturation)
 wallrust ~/Pictures/wallpaper.jpg --custom "10 99\n17 66\n24 49\n39 41\n51 37\n58 34\n72 30\n84 26\n99 22"
