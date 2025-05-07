@@ -5,35 +5,21 @@
 </div>
 <h1 align="center">Wallrust</h1>
 
-
-
-
-
-
 <div align="center">	
-A blazingly fast and feature-rich tool for image color palette extraction and theme generation, inspired by [wallbash](https://github.com/prasanthrangan/hyprdots/wiki/Wallbash/427700a4d4fa268bc7208ab273d8ea1619da97e2). 
+A blazingly fast and feature-rich tool for image color palette extraction and theme generation, inspired by <a href="[https://github.com/prime-run/wallrust](https://github.com/prasanthrangan/hyprdots/wiki/Wallbash/427700a4d4fa268bc7208ab273d8ea1619da97e2)"> wallbash </a> 
 </div>
 
 
 
 <div align="center">
-
 <p align="center">  
 <img src="https://github.com/user-attachments/assets/f2b29c74-cc45-44e2-9792-e25af45abd68"
   alt="main-togo-screen-shot"
   width="633" height="353">
 </p>
-  
 </div>
 
-
-
-
-
-
-
-
-A blazingly fast and feature-rich tool for image color palette extraction and theme generation, inspired by [wallbash](https://github.com/prasanthrangan/hyprdots/wiki/Wallbash/427700a4d4fa268bc7208ab273d8ea1619da97e2). 
+<p>.</p>
 
 ## Features ✨
 
@@ -41,29 +27,6 @@ A blazingly fast and feature-rich tool for image color palette extraction and th
 * **Visual preview:** View extracted color palettets in a generated HTML file
 * **Smart caching:** smart caching and cache invalidation for optimum performance!
 
-<summary><strong>Table of Contents 📜</strong></summary>
-
-
-  - [Installation](#installation)
-    - [Archlinux](#archlinux)
-    - [install pre-built binary (recommended):](#install-pre-built-binary-recommended)
-    - [build from source:](#build-from-source)
-    - [Cargo](#cargo-img-srchttpsskilliconsdeviconsirustthemedark-height20-stylevertical-align-middle)
-    - [download binaries from [releases](https://github.com/prime-run/wallrust/releases)](#download-binaries-from-releaseshttpsgithubcomprime-runwallrustreleases-)
-    - [Clone and build](#clone-and-build-img-srchttpsskilliconsdeviconsigithubthemedark-height20-stylevertical-align-middle)
-  - [Usage](#usage)
-    - [Basic Usage](#basic-usage)
-    - [Process an image file](#process-an-image-file)
-    - [Simple Example](#simple-example)
-    - [Command-Line Options](#command-line-options)
-    - [More Examples](#more-examples)
-  - [Output Files](#output-files)
-  - [Output Directory](#output-directory)
-  - [Custom Templates](#custom-templates)
-  - [Template Output Path and Backup Directives](#template-output-path-and-backup-directives)
-  - [Color Profiles](#color-profiles)
-  - [Wallset Mode](#wallset-mode)
-  - [Requirements](#requirements)
 
 
 ## Installation
