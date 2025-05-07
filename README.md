@@ -6,6 +6,8 @@
 <h1 align="center">Wallrust</h1>
 
 <div align="center">	
+  <p align="center">  . </p>
+
 A blazingly fast and feature-rich tool for image color palette extraction and theme generation, inspired by <a href="[https://github.com/prime-run/wallrust](https://github.com/prasanthrangan/hyprdots/wiki/Wallbash/427700a4d4fa268bc7208ab273d8ea1619da97e2)"> wallbash </a> 
 </div>
 
@@ -19,7 +21,7 @@ A blazingly fast and feature-rich tool for image color palette extraction and th
 </p>
 </div>
 
-<p>.</p>
+<p align="center">  . </p>
 
 ## Features ✨
 
@@ -29,10 +31,10 @@ A blazingly fast and feature-rich tool for image color palette extraction and th
 
 
 
-## Installation
+<h2> Installation </h2>
 
 
-###  Archlinux  <img src="https://skillicons.dev/icons?i=arch,&theme=dark" height="20" style="vertical-align: middle;"> 
+<h3>  Archlinux  <img src="https://skillicons.dev/icons?i=arch,&theme=dark" height="20" style="vertical-align: middle;">  </h3>
 
 `wallrust` is pushed to the arch [AUR](https://aur.archlinux.org/packages/wallrust).
 
@@ -53,7 +55,7 @@ yay -Sy wallrust
 <p align="center">.</p>
 
 
-### Cargo <img src="https://skillicons.dev/icons?i=rust,&theme=dark" height="20" style="vertical-align: middle;"> 
+<h3> Cargo <img src="https://skillicons.dev/icons?i=rust,&theme=dark" height="20" style="vertical-align: middle;">  </h3>
 wallrust can be installed on your machine or can be included in your project from [crates.io](https://crates.io/crates/wallrust)
 
 ```bash
@@ -61,7 +63,7 @@ cargo install wallrust
 ```
 <p align="center">.</p>
 
-### download binaries from [releases](https://github.com/prime-run/wallrust/releases)  📥
+<h3> download binaries from [releases](https://github.com/prime-run/wallrust/releases)  📥 </h3>
 
 ```bash
 wget https://github.com/prime-run/wallrust/releases/download/v1.0.4/wallrust-1.0.4-linux-x86_64.tar.gz
@@ -77,7 +79,7 @@ export PATH="$HOME/.local/bin:$PATH
 
 <p align="center">.</p>
 
-### Clone and build <img src="https://skillicons.dev/icons?i=github,&theme=dark" height="20" style="vertical-align: middle;"> 
+<h3> Clone and build <img src="https://skillicons.dev/icons?i=github,&theme=dark" height="20" style="vertical-align: middle;"> </h3>
 
 Using makefile:
 
@@ -98,9 +100,9 @@ cargo build
 
 and also simple [cargo-make](https://crates.io/crates/cargo-make/0.3.54) file is included.
 
-## Usage
+<h2> Usage </h2>
 
-### Basic Usage
+<h3> Basic Usage </h3>
 
 ```bash
 
@@ -114,7 +116,7 @@ By default, 3 color palette files ( `.css` , `.dcol` , `.json`) will be generate
 > By default, Wallrust generates 4 Primary colors and 9 accent colors (shades) for each one + 4 text colors. Also dark mode is set by default.
 
 
-### Simple Example
+<h3> Simple Example </h3>
 
 ```bash
 wallrust ./example.png --html --vibrant --output-dir /path/to/my-colors/ --colors 6
@@ -123,7 +125,7 @@ It will generate `6 primary` colors + `9 accents for each` of them and save them
 
 
 
-## Command-Line Options
+<h3>  Command-Line Options </h3> 
 
 | **Flag**              | **Action** |
 |---------------------------|--------------------------------|
@@ -143,7 +145,6 @@ It will generate `6 primary` colors + `9 accents for each` of them and save them
 |   `--no-templates`            |Skip custom template generation |
 |   `-h`, `--help`                |Print help |
 |   `-V`, `--version`             |Print version |
-|
 
 
 
@@ -152,7 +153,8 @@ It will generate `6 primary` colors + `9 accents for each` of them and save them
 
 
 
-### More Examples
+
+<h3>  More Examples </h3> 
 
 pallettes: `vibrant`, `pastel`, `mono`, `dark`, `light` , `custom` `colors <int>`
 
@@ -182,7 +184,7 @@ wallrust ~/Pictures/wallpaper.jpg --no-templates
 wallrust ~/Pictures/wallpaper.jpg --custom "10 99\n17 66\n24 49\n39 41\n51 37\n58 34\n72 30\n84 26\n99 22"
 ```
 
-## Output Files
+<h3>  Output Files <h3> 
 
 Wallrust generates these files in the output directory:
 
@@ -195,13 +197,42 @@ When using the `--wallset` flag, additional files are generated:
 - Thumbnail in `~/.cache/wallrust/thumbs/{hash}.thmb`
 - Hash-based dcol file in `~/.cache/wallrust/dcols/{hash}.dcol`
 
-### Output Directory
+<h3>  Output Directory </h3> 
 
 - Default: `~/.cache/wallrust/`
 - Custom: Specified with `--output-dir`
 - Thumbnails and hash-based dcol files: `~/.cache/wallrust/thumbs/` and `~/.cache/wallrust/dcols/`
 
-## Custom Templates
+
+<h3>  Color Profiles </h3> 
+
+- **default**: Balanced colors with moderate saturation
+- **vibrant**: High saturation, vivid colors
+- **pastel**: Soft, muted colors with lower saturation
+- **mono**: Grayscale palette
+
+<h3>  Wallset Mode </h3> 
+
+The `--wallset` flag enables a mode that works similarly to the wallbash scripts:
+
+1. **Thumbnail Generation**: Creates a smaller thumbnail image optimized for color extraction
+2. **Consistent File Naming**: Uses SHA256 hashing of the image path for consistent file names
+3. **Directory Structure**: Organizes files in a way compatible with theme-switching scripts
+
+This mode is ideal when:
+- You need consistent color extraction between Wallrust and wallbash scripts
+- You want optimized performance for large image files
+- You're integrating with other tools that expect this specific format
+
+Example with all options:
+```bash
+wallrust ~/Pictures/wallpaper.jpg --wallset --vibrant --dark
+```
+
+
+
+
+<h2>  Custom Templates (config file blue-print) <h2>
 
 Create template files in `~/.config/wallrust/templates/` using [Tera](https://github.com/Keats/tera) syntax. Available template variables:
 
@@ -240,30 +271,6 @@ You can control where a template's output is written and whether to back up the 
 {# backup: true #}
 ```
 
-## Color Profiles
-
-- **default**: Balanced colors with moderate saturation
-- **vibrant**: High saturation, vivid colors
-- **pastel**: Soft, muted colors with lower saturation
-- **mono**: Grayscale palette
-
-## Wallset Mode
-
-The `--wallset` flag enables a mode that works similarly to the wallbash scripts:
-
-1. **Thumbnail Generation**: Creates a smaller thumbnail image optimized for color extraction
-2. **Consistent File Naming**: Uses SHA256 hashing of the image path for consistent file names
-3. **Directory Structure**: Organizes files in a way compatible with theme-switching scripts
-
-This mode is ideal when:
-- You need consistent color extraction between Wallrust and wallbash scripts
-- You want optimized performance for large image files
-- You're integrating with other tools that expect this specific format
-
-Example with all options:
-```bash
-wallrust ~/Pictures/wallpaper.jpg --wallset --vibrant --dark
-```
 
 ## Requirements
 
