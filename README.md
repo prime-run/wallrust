@@ -101,6 +101,9 @@ cargo build
 and also simple [cargo-make](https://crates.io/crates/cargo-make/0.3.54) file is included.
 
 <h2> Usage </h2>
+```bash
+wallrust <OPTIONS> <IMAGE>
+```
 
 <h3> Basic Usage </h3>
 
@@ -184,7 +187,7 @@ wallrust ~/Pictures/wallpaper.jpg --no-templates
 wallrust ~/Pictures/wallpaper.jpg --custom "10 99\n17 66\n24 49\n39 41\n51 37\n58 34\n72 30\n84 26\n99 22"
 ```
 
-<h3>  Output Files <h3> 
+<h3>  Output Files </h3>
 
 Wallrust generates these files in the output directory:
 
