@@ -235,7 +235,7 @@ wallrust ~/Pictures/wallpaper.jpg --wallset --vibrant --dark
 
 
 
-<h2>  Custom Templates (config file blue-print) <h2>
+<h2>  Custom Templates (config file blue-print) </h2>
 
 Create template files in `~/.config/wallrust/templates/` using [Tera](https://github.com/Keats/tera) syntax. Available template variables:
 
