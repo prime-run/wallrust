@@ -101,6 +101,7 @@ cargo build
 and also simple [cargo-make](https://crates.io/crates/cargo-make/0.3.54) file is included.
 
 <h2> Usage </h2>
+
 ```bash
 wallrust <OPTIONS> <IMAGE>
 ```
@@ -113,6 +114,7 @@ wallrust <OPTIONS> <IMAGE>
 wallrust /path/to/image
 
 ```
+
 By default, 3 color palette files ( `.css` , `.dcol` , `.json`) will be generated in the same directory as image. You can specify the output directory by passing `-o /some/path/` or `--output-dir /some/path/`.
 
 > [!TIP]
