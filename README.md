@@ -1,15 +1,35 @@
-
-
-
 <div align="center">
   <a href="https://github.com/prime-run/wallrust">
     <img src="https://github.com/user-attachments/assets/f4fe0070-c08c-4305-baf9-f1a67034aae6" alt="wallrust logo" height="100">
   </a>
 </div>
-
 <h1 align="center">Wallrust</h1>
 
-<p align="center">.</p>
+
+
+
+
+
+<div align="center">	
+A blazingly fast and feature-rich tool for image color palette extraction and theme generation, inspired by [wallbash](https://github.com/prasanthrangan/hyprdots/wiki/Wallbash/427700a4d4fa268bc7208ab273d8ea1619da97e2). 
+</div>
+
+
+
+<div align="center">
+
+<p align="center">  
+<img src="https://github.com/user-attachments/assets/f2b29c74-cc45-44e2-9792-e25af45abd68"
+  alt="main-togo-screen-shot"
+  width="633" height="353">
+</p>
+  
+</div>
+
+
+
+
+
 
 
 
@@ -25,19 +45,18 @@ A blazingly fast and feature-rich tool for image color palette extraction and th
 
 
   - [Installation](#installation)
-    - [Archlinux  <img src="https://skillicons.dev/icons?i=arch,&theme=dark" height="20" style="vertical-align: middle;">](#archlinux-img-srchttpsskilliconsdeviconsiarchthemedark-height20-stylevertical-align-middle)
-- [install pre-built binary (recommended):](#install-pre-built-binary-recommended)
-- [build from source:](#build-from-source)
-    - [Cargo <img src="https://skillicons.dev/icons?i=rust,&theme=dark" height="20" style="vertical-align: middle;">](#cargo-img-srchttpsskilliconsdeviconsirustthemedark-height20-stylevertical-align-middle)
-    - [download binaries from [releases](https://github.com/prime-run/wallrust/releases)  📥](#download-binaries-from-releaseshttpsgithubcomprime-runwallrustreleases-)
-    - [Clone and build <img src="https://skillicons.dev/icons?i=github,&theme=dark" height="20" style="vertical-align: middle;">](#clone-and-build-img-srchttpsskilliconsdeviconsigithubthemedark-height20-stylevertical-align-middle)
+    - [Archlinux](#archlinux)
+    - [install pre-built binary (recommended):](#install-pre-built-binary-recommended)
+    - [build from source:](#build-from-source)
+    - [Cargo](#cargo-img-srchttpsskilliconsdeviconsirustthemedark-height20-stylevertical-align-middle)
+    - [download binaries from [releases](https://github.com/prime-run/wallrust/releases)](#download-binaries-from-releaseshttpsgithubcomprime-runwallrustreleases-)
+    - [Clone and build](#clone-and-build-img-srchttpsskilliconsdeviconsigithubthemedark-height20-stylevertical-align-middle)
   - [Usage](#usage)
     - [Basic Usage](#basic-usage)
-- [Process an image file](#process-an-image-file)
+    - [Process an image file](#process-an-image-file)
     - [Simple Example](#simple-example)
-  - [Command-Line Options](#command-line-options)
+    - [Command-Line Options](#command-line-options)
     - [More Examples](#more-examples)
-
   - [Output Files](#output-files)
   - [Output Directory](#output-directory)
   - [Custom Templates](#custom-templates)
