@@ -1,4 +1,4 @@
- # Wallrust Color Palette Generation
+# Wallrust Color Palette Generation
 
 This document explains how Wallrust generates color palettes from wallpapers, how the palette arrays are structured, and how you can use them in Tera templates for custom theme generation.
 
@@ -122,4 +122,4 @@ You can also use RGBA variants for CSS:
 - The number of colors and accent variants is configurable
 - `mode` and `is_dark` can be used for conditional logic in your templates
 
-For more examples, see the provided templates and the README-template.md.
+For more examples, see the provided template [examples](https://github.com/prime-run/wallrust/tree/master/examples)

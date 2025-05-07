@@ -1,52 +1,82 @@
-# Wallrust
+<div align="center">
+  <a href="https://github.com/prime-run/wallrust">
+    <img src="https://github.com/user-attachments/assets/f4fe0070-c08c-4305-baf9-f1a67034aae6" alt="wallrust logo" height="100">
+  </a>
+</div>
+<h1 align="center">Wallrust</h1>
 
-A blazingly fast and feature-rich tool for image color palette extraction and theme generation, inspired by [wallbash](https://github.com/prasanthrangan/hyprdots/wiki/Wallbash/427700a4d4fa268bc7208ab273d8ea1619da97e2).
+<div align="center">	
+  <p align="center">  . </p>
 
-## Installation
+A blazingly fast and feature-rich tool for image color palette extraction and theme generation, inspired by <a href="[https://github.com/prime-run/wallrust](https://github.com/prasanthrangan/hyprdots/wiki/Wallbash/427700a4d4fa268bc7208ab273d8ea1619da97e2)"> wallbash </a>
 
-### archlinux
+</div>
+
+<div align="center">
+<p align="center">  
+<img src="https://github.com/user-attachments/assets/f2b29c74-cc45-44e2-9792-e25af45abd68"
+  alt="main-togo-screen-shot"
+  width="633" height="353">
+</p>
+</div>
+
+<p align="center">  . </p>
+
+## Features ✨
+
+- **Config File generation:** Blue-print your `example.conf` file and automatically populate them with generated colors and `cp` them all in place!
+- **Visual preview:** View extracted color palettets in a generated HTML file
+- **Smart caching:** smart caching and cache invalidation for optimum performance!
+
+<h2> Installation </h2>
+
+<h3>  Archlinux  <img src="https://skillicons.dev/icons?i=arch,&theme=dark" height="20" style="vertical-align: middle;">  </h3>
 
 `wallrust` is pushed to the arch [AUR](https://aur.archlinux.org/packages/wallrust).
 
-use pre-built binary(recommended):
-
 ```bash
+# install pre-built binary (recommended):
 yay -Sy wallrust-bin
 
 ```
 
-build from source:
+or
 
 ```bash
+# build from source:
 yay -Sy wallrust
 ```
 
-### cargo
+<p align="center">.</p>
+
+<h3> Cargo <img src="https://skillicons.dev/icons?i=rust,&theme=dark" height="20" style="vertical-align: middle;">  </h3>
+
+wallrust can be installed on your machine or can be included in your project from [crates.io](https://crates.io/crates/wallrust)
 
 ```bash
 cargo install wallrust
 ```
 
-### download binaries from [releases](https://github.com/prime-run/wallrust/releases)
+<p align="center">.</p>
+
+<h3> download binaries from  <a href="https://github.com/prime-run/wallrust/releases">releases</a> 📥 </h3>
 
 ```bash
-wget https://github.com/prime-run/wallrust/releases/download/v1.0.1/wallrust-1.0.1-linux-x86_64.tar.gz
-tar -xvf wallrust-1.0.1-linux-x86_64.tar.gz
-cp wallrust-1.0.1-linux-x86_64/wallrust ~/.local/bin/
+wget https://github.com/prime-run/wallrust/releases/download/v1.0.4/wallrust-1.0.4-linux-x86_64.tar.gz
+tar -xvf wallrust-1.0.4-linux-x86_64.tar.gz
+cp wallrust-1.0.4-linux-x86_64/wallrust ~/.local/bin/
 
 ```
 
 make sure to add `~/.local/bin` to your `$PATH`
 
 ```bash
-#bash
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
-
-#zsh
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
+export PATH="$HOME/.local/bin:$PATH
 ```
 
-### Manual
+<p align="center">.</p>
+
+<h3> Clone and build <img src="https://skillicons.dev/icons?i=github,&theme=dark" height="20" style="vertical-align: middle;"> </h3>
 
 Using makefile:
 
@@ -65,49 +95,62 @@ cd wallrust
 cargo build
 ```
 
-a simple [cargo-make](https://crates.io/crates/cargo-make/0.3.54) file is included.
+and also simple [cargo-make](https://crates.io/crates/cargo-make/0.3.54) file is included.
 
-## Usage
-
-### Basic Usage
+<h2> Usage </h2>
 
 ```bash
+wallrust <OPTIONS> <IMAGE>
+```
+
+<h3> Basic Usage </h3>
+
+```bash
+
 # Process an image file
-wallrust /path/to/wallpaper.[png , jpg , gif ]
+wallrust /path/to/image
 
-# Auto-detect current Hyprland wallpaper
-wallrust --detect-hyprland
 ```
 
-### Command-Line Options
+By default, 3 color palette files ( `.css` , `.dcol` , `.json`) will be generated in the same directory as image. You can specify the output directory by passing `-o /some/path/` or `--output-dir /some/path/`.
+
+> [!TIP]
+> By default, Wallrust generates 4 Primary colors and 9 accent colors (shades) for each one + 4 text colors. Also dark mode is set by default.
+
+<h3> Simple Example </h3>
 
 ```bash
-USAGE:
-    wallrust [OPTIONS] [INPUT_IMAGE]
-
-ARGS:
-    <INPUT_IMAGE>    Path to the input wallpaper image
-
-OPTIONS:
-    -f, --force                Force regeneration (ignore cache)
-    -o, --output-dir <DIR>     Set custom output directory
-    -v, --vibrant              Use vibrant color profile
-    -p, --pastel               Use pastel color profile
-    -m, --mono                 Use monochrome profile
-    -c, --custom <CURVE>       Use custom color curve
-    -d, --dark                 Force dark sort mode
-    -l, --light                Force light sort mode
-    --html                     Generate HTML visualization of the color palette
-    --colors <N>               Number of primary colors [default: 4]
-    --fuzz <N>                 Color fuzziness percentage [default: 70]
-    --detect-hyprland          Detect current Hyprland wallpaper
-    --wallset                  Generate thumbnails and dcol files compatible with wallbash scripts
-    --no-templates             Skip custom template generation
-    -h, --help                 Print help
-    -V, --version              Print version
+wallrust ./example.png --html --vibrant --output-dir /path/to/my-colors/ --colors 6
 ```
 
-### Examples
+It will generate `6 primary` colors + `9 accents for each` of them and save them under `/path/to/my-colors/`. And `--html` flag will generate a visual html file of generated color under the same path.
+
+<h3>  Command-Line Options </h3>
+
+| **Flag**                  | **Action**                                                          |
+| ------------------------- | ------------------------------------------------------------------- |
+| ` -f` , `--force`         | Force regeneration (ignore cache)                                   |
+| `-o`, `--output-dir<DIR>` | Set custom output directory                                         |
+| `-v`, `--vibrant`         | Use vibrant color profile                                           |
+| `-p`, `--pastel`          | Use pastel color profile                                            |
+| `-m`, `--mono`            | Use monochrome profile                                              |
+| `-c`, `--custom <CURVE>`  | Use custom color curve                                              |
+| `-d`, `--dark`            | Force dark sort mode                                                |
+| `-l`, `--light`           | Force light sort mode                                               |
+| `--html`                  | Generate HTML visualization of the color palette                    |
+| `--colors <N>`            | Number of primary colors [default: 4]                               |
+| `--fuzz  <N>`             | Color fuzziness percentage [default: 70]                            |
+| `--detect-hyprland`       | Detect current Hyprland wallpaper                                   |
+| `--wallset`               | Generate thumbnails and dcol files compatible with wallbash scripts |
+| `--no-templates`          | Skip custom template generation                                     |
+| `-h`, `--help`            | Print help                                                          |
+| `-V`, `--version`         | Print version                                                       |
+
+here is an example `HTML` template generated from [this image](https://github.com/user-attachments/assets/293f488f-a983-4e8a-ae01-5b0c5375826a) (with `--wallset` flag)
+
+![250507_19h00m54s_screenshot](https://github.com/user-attachments/assets/ae25d320-d145-43f0-963d-e249dd82f97b)
+
+<h3>  More Examples </h3>
 
 pallettes: `vibrant`, `pastel`, `mono`, `dark`, `light` , `custom` `colors <int>`
 
@@ -137,7 +180,7 @@ wallrust ~/Pictures/wallpaper.jpg --no-templates
 wallrust ~/Pictures/wallpaper.jpg --custom "10 99\n17 66\n24 49\n39 41\n51 37\n58 34\n72 30\n84 26\n99 22"
 ```
 
-## Output Files
+<h3>  Output Files </h3>
 
 Wallrust generates these files in the output directory:
 
@@ -147,16 +190,44 @@ Wallrust generates these files in the output directory:
 - Custom template outputs (if templates exist)
 
 When using the `--wallset` flag, additional files are generated:
+
 - Thumbnail in `~/.cache/wallrust/thumbs/{hash}.thmb`
 - Hash-based dcol file in `~/.cache/wallrust/dcols/{hash}.dcol`
 
-### Output Directory
+<h3>  Output Directory </h3>
 
 - Default: `~/.cache/wallrust/`
 - Custom: Specified with `--output-dir`
 - Thumbnails and hash-based dcol files: `~/.cache/wallrust/thumbs/` and `~/.cache/wallrust/dcols/`
 
-## Custom Templates
+<h3>  Color Profiles </h3>
+
+- **default**: Balanced colors with moderate saturation
+- **vibrant**: High saturation, vivid colors
+- **pastel**: Soft, muted colors with lower saturation
+- **mono**: Grayscale palette
+
+<h3>  Wallset Mode </h3>
+
+The `--wallset` flag enables a mode that works similarly to the wallbash scripts:
+
+1. **Thumbnail Generation**: Creates a smaller thumbnail image optimized for color extraction
+2. **Consistent File Naming**: Uses SHA256 hashing of the image path for consistent file names
+3. **Directory Structure**: Organizes files in a way compatible with theme-switching scripts
+
+This mode is ideal when:
+
+- You need consistent color extraction between Wallrust and wallbash scripts
+- You want optimized performance for large image files
+- You're integrating with other tools that expect this specific format
+
+Example with all options:
+
+```bash
+wallrust ~/Pictures/wallpaper.jpg --wallset --vibrant --dark
+```
+
+<h2>  Custom Templates (config file blue-print) </h2>
 
 Create template files in `~/.config/wallrust/templates/` using [Tera](https://github.com/Keats/tera) syntax. Available template variables:
 
@@ -176,10 +247,12 @@ accents_rgba - RGBA versions of accent colors
 You can control where a template's output is written and whether to back up the previous file by adding special directives at the top of your template:
 
 - **Output Path**: Write the rendered file to a specific location (supports `~` and environment variables):
+
   ```
   {# output: ~/.config/kitty/colors.conf #}
   #!output: ~/.config/kitty/colors.conf
   ```
+
   If not specified, the output will be written to the default output directory.
 
 - **Backup**: If set to `true`, and the output file exists, it will be backed up to `<output_path>.wr.bakup` before being overwritten:
@@ -190,37 +263,19 @@ You can control where a template's output is written and whether to back up the 
   Default is `false` (no backup).
 
 **Example at the top of a template:**
+
 ```
 {# output: ~/.config/kitty/colors.conf #}
 {# backup: true #}
 ```
 
-## Color Profiles
-
-- **default**: Balanced colors with moderate saturation
-- **vibrant**: High saturation, vivid colors
-- **pastel**: Soft, muted colors with lower saturation
-- **mono**: Grayscale palette
-
-## Wallset Mode
-
-The `--wallset` flag enables a mode that works similarly to the wallbash scripts:
-
-1. **Thumbnail Generation**: Creates a smaller thumbnail image optimized for color extraction
-2. **Consistent File Naming**: Uses SHA256 hashing of the image path for consistent file names
-3. **Directory Structure**: Organizes files in a way compatible with theme-switching scripts
-
-This mode is ideal when:
-- You need consistent color extraction between Wallrust and wallbash scripts
-- You want optimized performance for large image files
-- You're integrating with other tools that expect this specific format
-
-Example with all options:
-```bash
-wallrust ~/Pictures/wallpaper.jpg --wallset --vibrant --dark
-```
+For more information on templates, checkout [Templating](Templating.md).
 
 ## Requirements
 
-- ImageMagick
-- Optional: hyprctl (for Hyprland wallpaper detection)
+- [ImageMagick](https://github.com/ImageMagick/ImageMagick)
+- Optional: [hyprctl](https://wiki.hyprland.org/Configuring/Using-hyprctl/) (for Hyprland wallpaper detection)
+
+## License
+
+This project is licensed under MIT - see the [LICENSE](LICENSE) file for details.
