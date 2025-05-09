@@ -1,3 +1,74 @@
+//! Wallrust is a fast, CLI tool for extracting color palettes from images and generating theme/config files for ricing, theming, and automation workflows. Designed for power users, it leverages ImageMagick for robust color analysis and supports advanced customization, multiple output formats, and seamless integration with user-defined templates. Wallrust automates the process of keeping your desktop, terminal, and app configs in sync with your wallpaper, making it a cornerstone for ricing setups and theme switchers.
+//!
+//! ## Usage
+//! ```text
+//! Usage: wallrust [OPTIONS] [INPUT_IMAGE]
+//!
+//! Arguments:
+//!   [INPUT_IMAGE]  
+//!
+//! Options:
+//!   -f, --force             
+//!   -o, --output-dir <DIR>  
+//!   -v, --vibrant           Use vibrant color profile
+//!   -p, --pastel            Use pastel color profile
+//!   -m, --mono              Use monochrome color profile
+//!   -c, --custom <CURVE>    Use custom color curve (provide curve string)
+//!   -d, --dark              Force dark sort mode
+//!   -l, --light             Force light sort mode
+//!       --colors <COLORS>   Number of primary colors to extract [default: 4]
+//!       --fuzz <FUZZ>       Color fuzziness percentage for k-means [default: 70]
+//!       --detect-hyprland   Attempt to detect current Hyprland wallpaper via hyprctl
+//!       --html              Generate HTML color palette preview
+//!       --wallset           Generate thumbnails and dcol files compatible with wallbash scripts
+//!       --no-templates      Skip custom template generation
+//!   -h, --help              Print help
+//!   -V, --version           Print version
+//! ```
+//!
+//! ## Example usage
+//! ```sh
+//! # Basic: Extract a palette and generate CSS, JSON, dcol, and HTML preview
+//! wallrust ~/Pictures/wallpaper.jpg --colors 6 --html
+//!
+//! # Generate and apply templates (from ~/.config/wallrust/templates/) to instantly rice your setup
+//! wallrust ~/Pictures/wallpaper.jpg --output-dir ~/.config/kitty/
+//!
+//! # Use wallset mode for hash-based palette extraction (for theme switchers and caching)
+//! wallrust ~/Pictures/wallpaper.jpg --wallset
+//!
+//! # Extract from the current Hyprland wallpaper, apply a pastel curve, and skip template generation
+//! wallrust --detect-hyprland --pastel --no-templates
+//! ```
+//!
+//! ## Advanced
+//! Wallrust supports custom color curves, wallset mode (hash-based palette extraction for theme switching), palette caching, and automatic dark/light mode detection. It can generate and place files anywhere, with optional backup of previous configs. Integrates with Hyprland for automatic wallpaper detection and can be scripted for dynamic theme automation.
+//!
+//! ## Templating
+//! Place [Tera](https://tera.netlify.app/) templates in `~/.config/wallrust/templates/` to generate any config file with palette variables (primary, text, accents, etc). Output paths and backup behavior can be controlled via template directives at the top of each template. This enables fully automated, wallpaper-driven config generation for any app.
+//!
+//! ## Available Tera Template Variables
+//! The following variables are available in your templates:
+//!
+//! - `mode`: "dark" or "light" (auto-detected or forced)
+//! - `wallpaper`: Path to the source image
+//! - `primary`: Array of primary hex colors (e.g., ["AABBCC", ...])
+//! - `text`: Array of text hex colors
+//! - `accents`: 2D array of accent hex colors by primary index (e.g., `accents[0][0]`)
+//! - `primary_rgba`: Array of RGBA strings for each primary color (e.g., "170,187,204,1.0")
+//! - `text_rgba`: Array of RGBA strings for each text color
+//! - `accents_rgba`: 2D array of RGBA strings for each accent color
+//! - `is_dark`: Boolean, true if mode is dark
+//!
+//! Example usage in a Tera template:
+//!
+//! ```tera
+//! background = #{{ primary[0] }}
+//! foreground = #{{ text[0] }}
+//! accent1 = #{{ accents[0][0] }}
+//! ```
+//! 
+
 mod cache;
 mod cli;
 mod config;
@@ -155,6 +226,7 @@ fn main() -> Result<()> {
             
             imagemagick::ping_image(&extraction_image_path).context("ImageMagick ping failed")?;
 
+            /// Helper struct to ensure temporary MPC cache files are cleaned up after palette extraction.
             struct CleanupGuard<'a>(&'a PathBuf);
             impl<'a> Drop for CleanupGuard<'a> {
                 fn drop(&mut self) {

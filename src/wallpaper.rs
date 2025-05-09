@@ -1,7 +1,13 @@
+//! Detects the current Hyprland wallpaper using hyprctl for automatic palette extraction.
+//!
+//! This module provides functions to query Hyprland for the active wallpaper path, supporting seamless integration with dynamic wallpaper setups.
 use crate::error::WallbashError;
 use std::path::PathBuf;
 use std::process::Command;
 
+/// Attempts to detect the current Hyprland wallpaper path using hyprctl.
+///
+/// Returns the path to the active wallpaper, or an error if detection fails.
 pub fn detect_hyprland_wallpaper() -> Result<PathBuf, WallbashError> {
     println!("Attempting to detect Hyprland wallpaper via hyprctl...");
 

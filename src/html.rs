@@ -1,7 +1,11 @@
+//! Generates a modern HTML preview of the extracted color palette.
+//!
+//! This module provides functions to render a visually appealing, responsive HTML file that displays the palette's primary, text, and accent colors, suitable for quick visual inspection and sharing.
 use crate::config::Palette;
 use std::fs;
 use std::path::Path;
 
+/// Generates a modern, responsive HTML preview of the palette for visual inspection and sharing.
 pub fn generate_html(palette: &Palette, output_path: &Path) -> anyhow::Result<()> {
     let html = format!(
         r#"<!DOCTYPE html>
@@ -340,6 +344,7 @@ pub fn generate_html(palette: &Palette, output_path: &Path) -> anyhow::Result<()
     Ok(())
 }
 
+/// Generates HTML blocks for a list of colors, used for primary and text color sections.
 fn generate_color_blocks(colors: &[String], class: &str, prefix: &str) -> String {
     colors
         .iter()
@@ -363,6 +368,7 @@ fn generate_color_blocks(colors: &[String], class: &str, prefix: &str) -> String
         .join("\n")
 }
 
+/// Generates grouped HTML blocks for accent colors, organized by primary color.
 fn generate_grouped_accent_blocks(accents: &[Vec<String>]) -> String {
     accents
         .iter()
