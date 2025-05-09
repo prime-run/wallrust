@@ -1,3 +1,6 @@
+//! Wraps all ImageMagick CLI calls for color extraction, image processing, and color manipulation.
+//!
+//! This module provides functions to extract k-means colors, check brightness and saturation, modulate and convert colors, and generate thumbnails, all via the ImageMagick command-line interface.
 use crate::error::WallbashError;
 use lazy_static::lazy_static;
 use regex::Regex;
@@ -17,6 +20,9 @@ lazy_static! {
     static ref HSB_RE: Regex = Regex::new(r"hsb\((\d+\.?\d*),").unwrap();
 }
 
+/// Runs the ImageMagick `magick` command with the given arguments, handling errors and warnings.
+///
+/// Returns the process Output, or a WallbashError if the command fails or output is not valid.
 pub fn run_magick(args: &[&str]) -> Result<Output, WallbashError> {
     let output_res = Command::new("magick")
         .args(args)
@@ -50,7 +56,9 @@ pub fn run_magick(args: &[&str]) -> Result<Output, WallbashError> {
     }
 }
 
+/// Extension trait for extracting stdout as a String from std::process::Output with error handling.
 pub trait OutputExt {
+    /// Returns the stdout of the process as a String, or an error if the output is not valid UTF-8.
     fn stdout_str(&self) -> Result<String, WallbashError>;
 }
 
@@ -89,6 +97,7 @@ pub fn create_mpc_cache(image_path: &Path, mpc_path: &Path) -> Result<(), Wallba
     Ok(())
 }
 
+/// Extracts k-means colors from an image using ImageMagick, returning a list of (count, hex) tuples.
 pub fn extract_kmeans_colors(
     mpc_path: &Path,
     colors: usize,
@@ -128,6 +137,7 @@ pub fn extract_kmeans_colors(
     Ok(dcol_raw)
 }
 
+/// Checks if the target image is dark or light by analyzing its mean brightness.
 pub fn check_brightness_dark(target: &str) -> Result<bool, WallbashError> {
     let fx_output = run_magick(&[
         target,
@@ -155,6 +165,7 @@ pub fn check_brightness_dark(target: &str) -> Result<bool, WallbashError> {
     Ok(mean < 0.5)
 }
 
+/// Returns the average saturation of an image, used to detect grayscale images.
 pub fn get_average_saturation(mpc_path: &Path) -> Result<f64, WallbashError> {
     let mpc_arg = format!("mpc:{}", mpc_path.to_str().unwrap());
     let fx_output = run_magick(&[
@@ -185,6 +196,7 @@ pub fn get_average_saturation(mpc_path: &Path) -> Result<f64, WallbashError> {
     Ok(mean)
 }
 
+/// Modulates the brightness, saturation, and hue of a color using ImageMagick, returning the resulting hex color.
 pub fn modulate_color(
     source_target: &str,
     bri: u8,
@@ -219,6 +231,9 @@ pub fn modulate_color(
     Ok(hex)
 }
 
+/// Extracts the hue value from a color target using ImageMagick in HSB colorspace.
+///
+/// Parses the output of a histogram info command to find the hue component.
 pub fn get_hsb_hue(color_target: &str) -> Result<String, WallbashError> {
     let hue_output = run_magick(&[
         color_target,
@@ -243,6 +258,9 @@ pub fn get_hsb_hue(color_target: &str) -> Result<String, WallbashError> {
     Ok(hue_str.to_string())
 }
 
+/// Converts an HSB string (e.g., "hsb(210,80%,60%)") to a hex color using ImageMagick.
+///
+/// Returns the resulting hex color, or an error if parsing fails.
 pub fn color_from_hsb(hsb_string: &str) -> Result<String, WallbashError> {
     let hsb_target = format!("xc:{}", hsb_string);
     let acol_output = run_magick(&[
@@ -268,6 +286,7 @@ pub fn color_from_hsb(hsb_string: &str) -> Result<String, WallbashError> {
     Ok(hex)
 }
 
+/// Generates a thumbnail image for color extraction, resizing and centering the input image.
 pub fn generate_thumbnail(
     input_path: &Path,
     thumbnail_path: &Path,

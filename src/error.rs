@@ -1,3 +1,10 @@
+//! Defines Wallrust's custom error types for robust error handling across all modules.
+//!
+//! This module provides the `WallbashError` enum, which covers I/O, ImageMagick, template, and configuration errors, and integrates with anyhow and thiserror for ergonomic error management.
+
+/// Central error type for Wallrust, covering all major error cases.
+///
+/// This enum is used throughout the codebase for robust error handling and reporting.
 #[derive(Debug, thiserror::Error)]
 pub enum WallbashError {
     #[error("I/O Error: {0}")]

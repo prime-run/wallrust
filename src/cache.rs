@@ -1,3 +1,6 @@
+//! Handles palette caching, cache validation, and cache file I/O for Wallrust.
+//!
+//! This module provides functions to read, write, and validate palette caches, ensuring that color extraction is only performed when necessary. Caching is based on image checksum, color profile, extraction mode, and other relevant parameters.
 use crate::config::{CacheData, ColorProfile, Palette, SortMode};
 use crate::error::WallbashError;
 use sha2::{Digest, Sha256};
@@ -27,6 +30,7 @@ fn calculate_checksum(file_path: &Path) -> Result<String, WallbashError> {
     Ok(hex::encode(hash))
 }
 
+/// Reads the palette cache from a file, returning None if the cache does not exist or is invalid.
 pub fn read_cache(cache_file: &Path) -> Result<Option<CacheData>, WallbashError> {
     if !cache_file.exists() {
         println!("Cache file does not exist: {}", cache_file.display());
@@ -54,6 +58,7 @@ pub fn read_cache(cache_file: &Path) -> Result<Option<CacheData>, WallbashError>
     }
 }
 
+/// Writes the palette cache to a file in JSON format.
 pub fn write_cache(cache_file: &Path, data: &CacheData) -> Result<(), WallbashError> {
     println!("Writing cache to: {}", cache_file.display());
     
@@ -70,6 +75,7 @@ pub fn write_cache(cache_file: &Path, data: &CacheData) -> Result<(), WallbashEr
     Ok(())
 }
 
+/// Checks if the palette cache is valid for the current image and settings, returning the cached palette if valid.
 pub fn needs_regeneration(
     cache_file: &Path,
     current_image_path: &Path,
@@ -110,6 +116,7 @@ pub fn needs_regeneration(
     }
 }
 
+/// Creates a new CacheData struct for the current palette and settings.
 pub fn create_cache_data(
     image_path: &Path,
     profile: &ColorProfile,

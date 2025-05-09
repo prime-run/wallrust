@@ -1,6 +1,12 @@
+//! Defines and parses command-line arguments for Wallrust using clap.
+//!
+//! This module provides the `Cli` struct, which specifies all supported options, flags, and arguments for the Wallrust CLI interface.
 use crate::config::{DEFAULT_COLORS, DEFAULT_FUZZ};
 use clap::Parser;
 
+/// Command-line arguments for Wallrust.
+///
+/// This struct defines all supported CLI options, flags, and arguments, and is parsed using `clap`.
 #[derive(Parser, Debug)]
 #[command(author, version, about = "Generates color palettes from wallpapers", long_about = None)]
 pub struct Cli {

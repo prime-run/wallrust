@@ -1,3 +1,10 @@
+//! Defines configuration types, color profiles, palette structure, and application paths for Wallrust.
+//!
+//! This module contains:
+//! - Color profile and sort mode enums
+//! - The main `Palette` struct (used throughout the app and in templates)
+//! - Application path management (`AppPaths`)
+//! - Constants for default values and color curves
 use crate::error::WallbashError;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
@@ -20,6 +27,7 @@ pub const TXT_DARK_BRI: u8 = 188;
 pub const TXT_LIGHT_BRI: u8 = 16;
 pub const ACCENT_COUNT: usize = 9;
 
+/// Represents a color profile (default, vibrant, pastel, mono, or custom curve) for palette generation.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum ColorProfile {
     Default,
@@ -45,6 +53,9 @@ impl ColorProfile {
             ColorProfile::Custom(s) => s.clone(),
         }
     }
+    /// Constructs a ColorProfile from CLI flags, ensuring only one profile is selected.
+    ///
+    /// Returns an error if more than one profile is specified.
     pub fn from_cli(
         vibrant: bool,
         pastel: bool,
@@ -101,6 +112,7 @@ impl std::fmt::Display for ColorProfile {
     }
 }
 
+/// Determines how the palette is sorted (auto, dark, or light mode).
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub enum SortMode {
     Auto,
@@ -109,6 +121,9 @@ pub enum SortMode {
 }
 
 impl SortMode {
+    /// Constructs a SortMode from CLI flags, ensuring only one mode is selected.
+    ///
+    /// Returns an error if both dark and light are specified.
     pub fn from_cli(dark: bool, light: bool) -> Result<Self, WallbashError> {
         if dark && light {
             Err(WallbashError::InvalidInput(
@@ -134,6 +149,9 @@ impl std::fmt::Display for SortMode {
     }
 }
 
+/// The main palette structure containing all extracted and generated color data.
+///
+/// This struct is used throughout Wallrust and is available as context in Tera templates.
 #[derive(Debug, Serialize, Deserialize, Clone, Default)]
 pub struct Palette {
     pub mode: String,
@@ -152,6 +170,7 @@ fn default_is_dark() -> bool {
     false
 }
 
+/// Stores all data needed for palette caching and cache validation.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CacheData {
     pub image_path: String,
@@ -163,6 +182,7 @@ pub struct CacheData {
     pub wallset: bool,
 }
 
+/// Stores all relevant file and directory paths used by Wallrust for output, templates, and cache.
 #[derive(Debug, Clone)]
 pub struct AppPaths {
     pub template_dir: PathBuf,
@@ -174,6 +194,9 @@ pub struct AppPaths {
 }
 
 impl AppPaths {
+    /// Constructs all relevant file and directory paths for Wallrust, creating them if necessary.
+    ///
+    /// If `output_dir_override` is None, uses the current working directory for output.
     pub fn new(output_dir_override: Option<String>) -> Result<Self, WallbashError> {
         let home_dir = dirs::home_dir().ok_or(WallbashError::HomeDirNotFound)?;
         let config_dir = dirs::config_dir()
@@ -222,6 +245,7 @@ impl AppPaths {
         })
     }
     
+    /// Ensures the thumbnail directory exists, creating it if needed.
     pub fn ensure_thumbs_dir(&self) -> Result<(), WallbashError> {
         println!("Ensuring thumbnail directory exists: {}", self.thumbs_dir.display());
         if !self.thumbs_dir.exists() {
@@ -233,6 +257,7 @@ impl AppPaths {
         Ok(())
     }
     
+    /// Ensures the dcols directory exists, creating it if needed.
     pub fn ensure_dcols_dir(&self) -> Result<(), WallbashError> {
         println!("Ensuring dcols directory exists: {}", self.dcols_dir.display());
         if !self.dcols_dir.exists() {

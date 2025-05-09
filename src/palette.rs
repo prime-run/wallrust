@@ -1,3 +1,6 @@
+//! Generates the full color palette (primary, text, accents, RGBA) from extracted colors and user profile.
+//!
+//! This module contains the core logic for palette construction, including color sorting, dark/light mode detection, accent generation, and support for custom color curves.
 use crate::config::{
     ColorProfile, Palette, SortMode, ACCENT_COUNT, CURVE_GRAYSCALE, PRY_DARK_BRI, PRY_DARK_HUE,
     PRY_DARK_SAT, PRY_LIGHT_BRI, PRY_LIGHT_HUE, PRY_LIGHT_SAT, TXT_DARK_BRI, TXT_LIGHT_BRI,
@@ -8,6 +11,9 @@ use crate::imagemagick::{
 };
 use std::path::Path;
 
+/// Returns the RGB negative (inverted color) of a hex color string.
+///
+/// error if the input is not a valid 6-digit hex color.
 fn rgb_negative(hex_color: &str) -> Result<String, WallbashError> {
     let hex = hex_color.trim_start_matches('#');
     if hex.len() != 6 {
@@ -23,6 +29,9 @@ fn rgb_negative(hex_color: &str) -> Result<String, WallbashError> {
     Ok(format!("{:02X}{:02X}{:02X}", 255 - r, 255 - g, 255 - b))
 }
 
+/// Converts a hex color string to an RGBA string (e.g., "rgba(170,187,204,\1)").
+///
+/// error if the input is not a valid 6-digit hex color.
 pub fn rgba_convert(hex_color: &str) -> Result<String, WallbashError> {
     let hex = hex_color.trim_start_matches('#');
     if hex.len() != 6 {
@@ -38,6 +47,9 @@ pub fn rgba_convert(hex_color: &str) -> Result<String, WallbashError> {
     Ok(format!("rgba({},{},{},\\1)", r, g, b))
 }
 
+/// Calculates the relative luminance (luma) of a hex color string using the sRGB formula.
+///
+/// Returns 0.0 if the input is not a valid 6-digit hex color.
 fn calculate_luma(hex_color: &str) -> Result<f64, WallbashError> {
     let hex = hex_color.trim_start_matches('#');
     if hex.len() != 6 {
@@ -67,6 +79,9 @@ fn calculate_luma(hex_color: &str) -> Result<f64, WallbashError> {
     Ok(0.2126 * r + 0.7152 * g + 0.0722 * b)
 }
 
+/// Parses a color curve string into a vector of (brightness, saturation) points.
+///
+/// error if the format is invalid or values are out of range.
 fn parse_curve(curve_str: &str) -> Result<Vec<(u8, u8)>, WallbashError> {
     let mut points = Vec::new();
     for line in curve_str.trim().lines() {
@@ -107,6 +122,9 @@ fn parse_curve(curve_str: &str) -> Result<Vec<(u8, u8)>, WallbashError> {
     Ok(points)
 }
 
+/// Generates a full color palette (primary, text, accents, RGBA) from extracted colors and user profile.
+///
+/// This is the main entry point for palette construction, handling color sorting, mode detection, and accent generation.
 pub fn generate_palette(
     wallpaper_path: &Path,
     mpc_path: &Path,

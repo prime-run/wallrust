@@ -1,3 +1,6 @@
+//! Handles writing palette data to output files (CSS, JSON, dcol) and applies user templates for config generation.
+//!
+//! This module generates standard output files and renders user-defined Tera templates, supporting output path expansion and backup logic for seamless ricing automation.
 use crate::config::{AppPaths, Palette, ACCENT_COUNT};
 use crate::error::WallbashError;
 use std::fs::{self, File};
@@ -7,6 +10,7 @@ use tera::{Context, Tera};
 use std::io::BufRead;
 use shellexpand;
 
+/// Writes the palette to a dcol file (shell variable format for theme scripts).
 pub fn write_dcol(palette: &Palette, dcol_path: &Path) -> Result<(), WallbashError> {
     
     if let Some(parent) = dcol_path.parent() {
@@ -222,7 +226,9 @@ fn apply_templates(palette: &Palette, paths: &AppPaths) -> Result<(), WallbashEr
     Ok(())
 }
 
-
+/// Generates all standard output files (dcol, CSS, JSON) and applies user templates.
+///
+/// If `skip_templates` is true, skips template rendering.
 pub fn generate_outputs(palette: &Palette, paths: &AppPaths, skip_templates: bool) -> Result<(), WallbashError> {
     let dcol_path = paths.output_dir.join("wallrust.dcol");
     write_dcol(palette, &dcol_path)?;
