@@ -1,10 +1,10 @@
 [package]
 name = "wallrust"
-version = "1.0.4"
+version = "1.0.5"
 edition = "2024"
 authors = ["prime-run <prime0run@gmail.com>"]
 description = "a blazingly fast and feature-rich tool extract color palettes from images"
-license-file = "LICENSE"
+license = "MIT"
 homepage = "https://github.com/prime-run/wallrust"
 repository = "https://github.com/prime-run/wallrust"
 readme = "README.md"
