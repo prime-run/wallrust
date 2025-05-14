@@ -36,7 +36,7 @@ toml = "0.8"
 tera = "1.19"
 sha2 = "0.10"
 hex = "0.4"
-dirs = "5.0"
+dirs = "6.0"
 ordered-float = "4.2"
 
 
