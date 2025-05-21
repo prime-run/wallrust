@@ -2,7 +2,7 @@
   <h1 align="center">Wallrust
     <p align="center">
     <a href="https://github.com/prime-run/wallrust">
-    <img src="https://github.com/user-attachments/assets/62ba1b23-f8c4-43f4-977d-b75e0061f99c" alt="wallrust logo" height="150">
+    <img src="https://github.com/user-attachments/assets/f4fe0070-c08c-4305-baf9-f1a67034aae6" alt="wallrust logo" height="150">
   </a>
       </p>
     
