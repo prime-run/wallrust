@@ -23,6 +23,7 @@ Extract color palettes from images and **instantly rice _any_ setup or config fi
 
 - [Installation](#installation)
   - [Arch Linux](#arch-linux)
+  - [NixOS](#nixos)
   - [Cargo](#cargo)
   - [From Pre-built Binaries](#from-pre-built-binaries)
   - [From Source](#from-source)
@@ -50,6 +51,75 @@ Extract color palettes from images and **instantly rice _any_ setup or config fi
   ```bash
   yay -Sy wallrust
   ```
+
+### NixOS (flakes only)
+
+If you are using flakes to manage your NixOS installation, you can add the provided flake to your
+inputs. For example:
+
+```nix
+{
+  description = "Your configuration";
+
+  inputs = {
+    ...
+    wallrust = {
+      url = "github:prime-run/wallrust";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    ...
+  };
+  outputs = {
+    self,
+    nixpkgs,
+    ...
+  } @ inputs: {
+    # your configuration(s)
+  };
+}
+```
+
+Don't forget to pass in your inputs to your system configuration via *specialArgs* or your home configuration via *extraSpecialArgs*.
+
+Finally add the package to system packages or home packages (in case you are using home manager).
+
+```nix
+# configuration.nix
+{
+  pkgs,
+  inputs,
+  ...
+}: {
+{
+  environment.systemPackages = with pkgs; [
+    ...
+    inputs.wallrust.packages.${stdenv.hostPlatform.system}.default
+    ...
+  ];
+}
+```
+
+```nix
+# home.nix
+{
+  pkgs,
+  inputs,
+  ...
+}: {
+{
+  home.packages = with pkgs; [
+    ...
+    inputs.wallrust.packages.${stdenv.hostPlatform.system}.default
+    ...
+  ];
+}
+```
+
+In case you don't want to install it permanently, you can also run it directly using:
+
+```bash
+nix run github:prime-run/wallrust
+```
 
 ### Cargo
 
